@@ -1,6 +1,6 @@
 import 'package:covid_19/Provider/api_data.dart';
 import 'package:covid_19/Provider/country.dart';
-import 'package:covid_19/data_screen.dart';
+import 'package:covid_19/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ola_like_country_picker/ola_like_country_picker.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +37,7 @@ class ListCountry extends StatelessWidget {
                   pref.setString('country', countryName.name);
                   country.setCountryName(countryName.name);
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => DataScreen()));
+                      MaterialPageRoute(builder: (context) => HomePage()));
                 },
               ),
             ),

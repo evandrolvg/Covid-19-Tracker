@@ -2,14 +2,16 @@ import 'package:covid_19/constant.dart';
 import 'package:flutter/material.dart';
 
 class Counter extends StatelessWidget {
-  final int number;
+  final String number;
   final Color color;
   final String title;
+  final String plus;
   const Counter({
     Key key,
     this.number,
     this.color,
     this.title,
+    this.plus,
   }) : super(key: key);
 
   @override
@@ -43,10 +45,9 @@ class Counter extends StatelessWidget {
             color: color,
           ),
         ),
+        Text(plus, style: kSubPlusTextStyle, textAlign: TextAlign.left),
         Text(title, style: kSubTextStyle),
       ],
     );
   }
 }
-
-

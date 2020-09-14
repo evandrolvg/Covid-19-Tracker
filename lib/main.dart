@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:ui';
+import 'package:covid_19/widgets/list_country.dart';
 import 'package:covid_19/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:covid_19/Provider/api_data.dart';
 import 'package:covid_19/Provider/country.dart';
-import 'package:covid_19/data_screen.dart';
+import 'package:covid_19/home_page.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MyApp());
 
@@ -45,39 +48,77 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatefulWidget {
+// class HomeScreen extends StatefulWidget {
+//   @override
+//   _HomeScreenState createState() => _HomeScreenState();
+// }
+
+class HomeScreen extends StatelessWidget {
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   controller.addListener(onScroll);
+  // }
+
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
+  //   controller.dispose();
+  //   super.dispose();
+  // }
+
+  // void onScroll() {
+  //   setState(() {
+  //     offset = (controller.hasClients) ? controller.offset : 0;
+  //   });
+  // }
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final controller = ScrollController();
-  double offset = 0;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    controller.addListener(onScroll);
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    controller.dispose();
-    super.dispose();
-  }
-
-  void onScroll() {
-    setState(() {
-      offset = (controller.hasClients) ? controller.offset : 0;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final liveCountry = Provider.of<allData>(context, listen: false);
+    final country = Provider.of<SCountry>(context, listen: false);
+    Timer(Duration(seconds: 3), () async {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      if (pref.getString('country') == null) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => ListCountry()));
+        liveCountry.retriveAll();
+      } else {
+        country.setCountryName(pref.getString('country'));
+        liveCountry.retrieveOne(country.CountryName);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
+        liveCountry.retriveAll();
+      }
+    });
     return Scaffold(
-      body: SingleChildScrollView(controller: controller, child: DataScreen()),
+      backgroundColor: Colors.white,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Center(
+            child: Container(
+                margin: EdgeInsets.all(5.0),
+                height: 125.0,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image:
+                            ExactAssetImage('assets/images/splashscreen.jpeg'),
+                        fit: BoxFit.fill)),
+                child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 2.0))),
+          ),
+          SizedBox(height: 50.0),
+          Container(
+              child: Text(
+            'v 1.0.1',
+            style: TextStyle(fontWeight: FontWeight.w300),
+          )),
+        ],
+      ),
     );
   }
 }

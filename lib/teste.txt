@@ -1,42 +1,26 @@
-import 'dart:ui';
-import 'package:covid_19/constant.dart';
-import 'package:covid_19/widgets/counter.dart';
-import 'package:covid_19/widgets/my_header.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
+--Data_screen
 
-class DataScreen extends StatefulWidget {
-  @override
-  _DataScreenState createState() => _DataScreenState();
-}
-
-class _DataScreenState extends State<DataScreen> {
-  final controller = ScrollController();
-  double offset = 0;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    controller.addListener(onScroll);
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    controller.dispose();
-    super.dispose();
-  }
-
-  void onScroll() {
-    setState(() {
-      offset = (controller.hasClients) ? controller.offset : 0;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    final liveCountry = Provider.of<allData>(context);
+
+    // final liveCountry =
+    //     Provider.of<allData>(context); // Timer(Duration(seconds: 3), () async {
+    //   SharedPreferences pref = await SharedPreferences.getInstance();
+    //   if (pref.getString('country') == null) {
+    //     Navigator.push(
+    //         context, MaterialPageRoute(builder: (context) => ListCountry()));
+    //     liveCountry.retriveAll();
+    //   } else {
+    //     country.setCountryName(pref.getString('country'));
+    //     liveCountry.retrieveOne(country.CountryName);
+    //     Navigator.push(
+    //         context, MaterialPageRoute(builder: (context) => DataScreen()));
+    // liveCountry.retriveAll();
+    //   }
+    // });
+    print(liveCountry.oneResponse.data);
     return Column(
       children: <Widget>[
         MyHeader(
@@ -58,7 +42,10 @@ class _DataScreenState extends State<DataScreen> {
             ),
           ),
           child: RaisedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ListCountry()));
+            },
             // shape: RoundedRectangleBorder(
             //     borderRadius: BorderRadius.circular(18.0),
             //     side: BorderSide(color: Colors.red)),
@@ -92,6 +79,13 @@ class _DataScreenState extends State<DataScreen> {
                   RichText(
                     text: TextSpan(
                       children: [
+                        // TextSpan(
+                        //   text:
+                        //       (liveCountry.oneResponse.data['country'] != null)
+                        //           ? liveCountry.oneResponse.data['country']
+                        //           : '',
+                        //   style: kTitleTextstyle,
+                        // ),
                         TextSpan(
                           text: "Case Update\n",
                           style: kTitleTextstyle,
