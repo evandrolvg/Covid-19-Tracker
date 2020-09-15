@@ -6,6 +6,7 @@ const kTitleTextColor = Color(0xFF303030);
 const kBodyTextColor = Color(0xFF4B4B4B);
 const kTextLightColor = Color(0xFF959595);
 const kInfectedColor = Color(0xFFFF8748);
+const kActiveColor = Color(0xFFE60C0C);
 const kDeathColor = Color(0xFFFF4848);
 const kRecovercolor = Color(0xFF36C12C);
 const kPrimaryColor = Color(0xFF3382CC);
@@ -14,7 +15,7 @@ final kActiveShadowColor = Color(0xFF4056C6).withOpacity(.15);
 
 // Text Style
 const kHeadingTextStyle = TextStyle(
-  fontSize: 22,
+  fontSize: 18,
   fontWeight: FontWeight.w600,
 );
 

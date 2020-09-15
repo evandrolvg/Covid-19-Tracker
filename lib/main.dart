@@ -12,40 +12,38 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => allData()),
-        ChangeNotifierProvider(create: (_) => SCountry())
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'COVID-19',
-        theme: ThemeData(
-            scaffoldBackgroundColor: kBackgroundColor,
-            fontFamily: "Poppins",
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-            textTheme: TextTheme(
-              body1: TextStyle(color: kBodyTextColor),
-            )),
-        home: HomeScreen(),
-      ),
-    );
+	// This widget is the root of your application.
+	@override
+	Widget build(BuildContext context) {
+	return MultiProvider(
+		providers: [
+					ChangeNotifierProvider(create: (_) => allData()),
+					ChangeNotifierProvider(create: (_) => SCountry())
+				],
+		child: MaterialApp(
+		debugShowCheckedModeBanner: false,
+		title: 'COVID-19',
+		theme: ThemeData(
+			scaffoldBackgroundColor: kBackgroundColor,
+			fontFamily: "Poppins",
+			visualDensity: VisualDensity.adaptivePlatformDensity,
+			),
+		home: HomeScreen(),
+		),
+	);
 
-    // return MaterialApp(
-    //   debugShowCheckedModeBanner: false,
-    //   title: 'Covid 19',
-    //   theme: ThemeData(
-    //       scaffoldBackgroundColor: kBackgroundColor,
-    //       fontFamily: "Poppins",
-    //       textTheme: TextTheme(
-    //         body1: TextStyle(color: kBodyTextColor),
-    //       )),
-    //   home: HomeScreen(),
-    // );
-  }
+	// return MaterialApp(
+	//   debugShowCheckedModeBanner: false,
+	//   title: 'Covid 19',
+	//   theme: ThemeData(
+	//       scaffoldBackgroundColor: kBackgroundColor,
+	//       fontFamily: "Poppins",
+	//       textTheme: TextTheme(
+	//         body1: TextStyle(color: kBodyTextColor),
+	//       )),
+	//   home: HomeScreen(),
+	// );
+	}
 }
 
 // class HomeScreen extends StatefulWidget {
@@ -54,71 +52,71 @@ class MyApp extends StatelessWidget {
 // }
 
 class HomeScreen extends StatelessWidget {
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   controller.addListener(onScroll);
-  // }
+	// @override
+	// void initState() {
+	//   // TODO: implement initState
+	//   super.initState();
+	//   controller.addListener(onScroll);
+	// }
 
-  // @override
-  // void dispose() {
-  //   // TODO: implement dispose
-  //   controller.dispose();
-  //   super.dispose();
-  // }
+	// @override
+	// void dispose() {
+	//   // TODO: implement dispose
+	//   controller.dispose();
+	//   super.dispose();
+	// }
 
-  // void onScroll() {
-  //   setState(() {
-  //     offset = (controller.hasClients) ? controller.offset : 0;
-  //   });
-  // }
+	// void onScroll() {
+	//   setState(() {
+	//     offset = (controller.hasClients) ? controller.offset : 0;
+	//   });
+	// }
 
-  @override
-  @override
-  Widget build(BuildContext context) {
-    final liveCountry = Provider.of<allData>(context, listen: false);
-    final country = Provider.of<SCountry>(context, listen: false);
-    Timer(Duration(seconds: 3), () async {
-      SharedPreferences pref = await SharedPreferences.getInstance();
-      if (pref.getString('country') == null) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => ListCountry()));
-        liveCountry.retriveAll();
-      } else {
-        country.setCountryName(pref.getString('country'));
-        liveCountry.retrieveOne(country.CountryName);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
-        liveCountry.retriveAll();
-      }
-    });
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Center(
-            child: Container(
-                margin: EdgeInsets.all(5.0),
-                height: 125.0,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image:
-                            ExactAssetImage('assets/images/splashscreen.jpeg'),
-                        fit: BoxFit.fill)),
-                child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 2.0))),
-          ),
-          SizedBox(height: 50.0),
-          Container(
-              child: Text(
-            'v 1.0.1',
-            style: TextStyle(fontWeight: FontWeight.w300),
-          )),
-        ],
-      ),
-    );
-  }
+	@override
+	@override
+	Widget build(BuildContext context) {
+	final liveCountry = Provider.of<allData>(context, listen: false);
+	final country = Provider.of<SCountry>(context, listen: false);
+	Timer(Duration(seconds: 3), () async {
+		SharedPreferences pref = await SharedPreferences.getInstance();
+		if (pref.getString('country') == null) {
+		Navigator.push(
+			context, MaterialPageRoute(builder: (context) => ListCountry()));
+		liveCountry.retriveAll();
+		} else {
+		country.setCountryName(pref.getString('country'));
+		liveCountry.retrieveOne(country.CountryName);
+		Navigator.push(
+			context, MaterialPageRoute(builder: (context) => HomePage()));
+		liveCountry.retriveAll();
+		}
+	});
+	return Scaffold(
+		backgroundColor: Colors.white,
+		body: Column(
+		crossAxisAlignment: CrossAxisAlignment.center,
+		mainAxisAlignment: MainAxisAlignment.center,
+		children: <Widget>[
+			Center(
+			child: Container(
+				margin: EdgeInsets.all(5.0),
+				height: 125.0,
+				width: MediaQuery.of(context).size.width,
+				decoration: BoxDecoration(
+					image: DecorationImage(
+						image:
+							ExactAssetImage('assets/images/splashscreen.jpeg'),
+						fit: BoxFit.fill)),
+				child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 2.0))),
+			),
+			SizedBox(height: 50.0),
+			Container(
+				child: Text(
+			'v 1.0.1',
+			style: TextStyle(fontWeight: FontWeight.w300),
+			)),
+		],
+		),
+	);
+	}
 }

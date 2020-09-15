@@ -1,4 +1,5 @@
 import 'package:covid_19/widgets/my_header.dart';
+//import 'package:covid_19/widgets/info_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:covid_19/constant.dart';
 import 'package:covid_19/widgets/counter.dart';
@@ -8,11 +9,37 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-class LivePage extends StatelessWidget {
+class LivePage extends StatefulWidget {
+  @override
+  _LivePageState createState() => _LivePageState();
+}
+
+class _LivePageState extends State<LivePage> {
   var n = NumberFormat.currency(locale: 'pt_BR', symbol: '', decimalDigits: 0);
+  final d = new DateFormat('dd MMMM, hh:mm a');
   double smallContainerHeight = 70.0;
   final controller = ScrollController();
   double offset = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller.addListener(onScroll);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    controller.dispose();
+    super.dispose();
+  }
+
+  void onScroll() {
+    setState(() {
+      offset = (controller.hasClients) ? controller.offset : 0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +54,8 @@ class LivePage extends StatelessWidget {
                 children: <Widget>[
                   MyHeader(
                     image: "assets/icons/Drcorona.svg",
-                    textTop: "Fica em casa",
-                    textBottom: "ô merda.",
+                    textTop: "All you need",
+                    textBottom: "is stay at home.",
                     offset: offset,
                   ),
                   Container(
@@ -50,9 +77,6 @@ class LivePage extends StatelessWidget {
                             MaterialPageRoute(
                                 builder: (context) => ListCountry()));
                       },
-                      // shape: RoundedRectangleBorder(
-                      //     borderRadius: BorderRadius.circular(18.0),
-                      //     side: BorderSide(color: Colors.red)),
                       color: Colors.transparent,
                       elevation: 0.0,
                       child: Padding(
@@ -63,7 +87,7 @@ class LivePage extends StatelessWidget {
                             SvgPicture.asset("assets/icons/maps-and-flags.svg"),
                             Text(
                               (liveCountry.oneResponse == null)
-                                  ? 'Selecione um país'
+                                  ? 'Select a country'
                                   : liveCountry.oneResponse.data['country'],
                               style: TextStyle(
                                   fontSize: 20,
@@ -75,66 +99,36 @@ class LivePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                          width: 100.0,
-                          child: Image.network(liveCountry
-                              .oneResponse.data['countryInfo']['flag']
-                              .toString())),
-                      SizedBox(
-                        width: 30.0,
-                      ),
-                      Container(
-                          child: Column(
-                        children: <Widget>[
-                          Text('Country:' +
-                              liveCountry.oneResponse.data['country']),
-                          Text('Continent:' +
-                              liveCountry.oneResponse.data['continent']),
-                          Text('Population: ' +
-                              liveCountry.oneResponse.data['population']
-                                  .toString())
-                        ],
-                      ))
-                    ],
-                  ),
                   SizedBox(height: 20),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: <Widget>[
+                        //INFO COUNTRY
+                        InfoCard(
+                            image: liveCountry
+                                .oneResponse.data['countryInfo']['flag']
+                                .toString(),
+                            title: n.format(
+                                liveCountry.oneResponse.data['population']),
+                            text: liveCountry.oneResponse.data['continent']),
+                        SizedBox(height: 10),
+                        //CASES UPDATE
                         Row(
                           children: <Widget>[
                             RichText(
                               text: TextSpan(
                                 children: [
-                                  // TextSpan(
-                                  //   text:
-                                  //       (liveCountry.oneResponse.data['country'] != null)
-                                  //           ? liveCountry.oneResponse.data['country']
-                                  //           : '',
-                                  //   style: kTitleTextstyle,
-                                  // ),
-                                  // Text(
-                                  //                     'Last Updated: ' +
-                                  //                         DateTime.fromMillisecondsSinceEpoch(
-                                  //                                 liveCountry.oneResponse.data['updated'])
-                                  //                             .toString()
-                                  //                             .split('.')[0],
-                                  //                     style: TextStyle(
-                                  //                         fontWeight: FontWeight.w300,
-                                  //                         fontStyle: FontStyle.italic),
-                                  //                   ),
                                   TextSpan(
-                                    text: "Case Update\n",
+                                    text: "Cases Update\n",
                                     style: kTitleTextstyle,
                                   ),
                                   TextSpan(
-                                    text: DateTime.fromMillisecondsSinceEpoch(
-                                            liveCountry
-                                                .oneResponse.data['updated'])
+                                    text: d
+                                        .format(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                liveCountry.oneResponse
+                                                    .data['updated']))
                                         .toString()
                                         .split('.')[0],
                                     style: TextStyle(
@@ -144,103 +138,51 @@ class LivePage extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            Spacer(),
-                            Text(
-                              "See details",
-                              style: TextStyle(
-                                color: kPrimaryColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
                           ],
                         ),
                         SizedBox(height: 10),
-                        Container(
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 4),
-                                blurRadius: 30,
-                                color: kShadowColor,
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Counter(
-                                color: kInfectedColor,
-                                number: n.format(
-                                    (liveCountry.oneResponse.data['cases'])),
-                                plus: '+' +
-                                    n.format(liveCountry
-                                        .oneResponse.data['todayCases']),
-                                title: "Total cases",
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 4),
-                                blurRadius: 30,
-                                color: kShadowColor,
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Counter(
-                                color: kRecovercolor,
-                                number: n.format(
-                                    liveCountry.oneResponse.data['recovered']),
-                                title: "Recovered",
-                                plus: '+' +
-                                    n.format(liveCountry
-                                        .oneResponse.data['todayRecovered']),
-                              )
-                            ],
-                          ),
+                        //TOTAL CASES
+                        Counter(
+                          color: kInfectedColor,
+                          number:
+                              n.format((liveCountry.oneResponse.data['cases'])),
+                          plus: '+' +
+                              n.format(
+                                  liveCountry.oneResponse.data['todayCases']),
+                          title: "Total cases",
                         ),
                         SizedBox(height: 10),
-                        Container(
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 4),
-                                blurRadius: 30,
-                                color: kShadowColor,
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Counter(
-                                color: kDeathColor,
-                                number: n.format(
-                                    liveCountry.oneResponse.data['deaths']),
-                                title: "Deaths",
-                                plus: '+' +
-                                    n.format(liveCountry
-                                        .oneResponse.data['todayDeaths']),
-                              )
-                            ],
-                          ),
+                        //ACTIVES
+                        Counter(
+                            color: kActiveColor,
+                            number: n
+                                .format(liveCountry.oneResponse.data['active']),
+                            title: "Total active",
+                            plus: ''),
+                        SizedBox(height: 10),
+                        //RECOVERED
+                        Counter(
+                          color: kRecovercolor,
+                          number: n.format(
+                              liveCountry.oneResponse.data['recovered']),
+                          title: "Total recovered",
+                          plus: '+' +
+                              n.format(liveCountry
+                                  .oneResponse.data['todayRecovered']),
+                        ),
+                        SizedBox(height: 10),
+                        //DEATHS
+                        Counter(
+                          color: kDeathColor,
+                          number:
+                              n.format(liveCountry.oneResponse.data['deaths']),
+                          title: "Total deaths",
+                          plus: '+' +
+                              n.format(
+                                  liveCountry.oneResponse.data['todayDeaths']),
                         ),
                         SizedBox(height: 20),
+                        //MAPS
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -286,200 +228,100 @@ class LivePage extends StatelessWidget {
       ),
     );
   }
+}
 
-  // return SingleChildScrollView(
-  //   physics: BouncingScrollPhysics(),
-  //   child: Container(
-  //       child: liveCountry.oneResponse == null
-  //           ? Center(child: Text('Loading data...'))
-  //           : Container(
-  //               child: Column(
-  //                 children: <Widget>[
-  //                   Container(
-  //                     margin: EdgeInsets.all(8.0),
-  //                     padding: EdgeInsets.all(10.0),
-  //                     decoration: BoxDecoration(
-  //                         gradient: LinearGradient(colors: [
-  //                           Colors.blue,
-  //                           Colors.white,
-  //                           Colors.purple
-  //                         ]),
-  //                         borderRadius:
-  //                             BorderRadius.all(Radius.circular(12.0))),
-  //                     child: Row(
-  //                       mainAxisAlignment: MainAxisAlignment.start,
-  //                       children: <Widget>[
-  //                         Container(
-  //                             width: 100.0,
-  //                             child: Image.network(liveCountry
-  //                                 .oneResponse.data['countryInfo']['flag']
-  //                                 .toString())),
-  //                         SizedBox(
-  //                           width: 30.0,
-  //                         ),
-  //                         Container(
-  //                             child: Column(
-  //                           children: <Widget>[
-  //                             Text('Country:' +
-  //                                 liveCountry.oneResponse.data['country']),
-  //                             Text('Continent:' +
-  //                                 liveCountry.oneResponse.data['continent']),
-  //                             Text('Population: ' +
-  //                                 liveCountry.oneResponse.data['population']
-  //                                     .toString())
-  //                           ],
-  //                         ))
-  //                       ],
-  //                     ),
-  //                   ),
-  //                   Text(
-  //                     'Last Updated: ' +
-  //                         DateTime.fromMillisecondsSinceEpoch(
-  //                                 liveCountry.oneResponse.data['updated'])
-  //                             .toString()
-  //                             .split('.')[0],
-  //                     style: TextStyle(
-  //                         fontWeight: FontWeight.w300,
-  //                         fontStyle: FontStyle.italic),
-  //                   ),
-  //                   Container(
-  //                       alignment: Alignment.topCenter,
-  //                       margin: EdgeInsets.all(10.0),
-  //                       padding: EdgeInsets.all(8.0),
-  //                       width: MediaQuery.of(context).size.width,
-  //                       height: smallContainerHeight,
-  //                       decoration: BoxDecoration(
-  //                         borderRadius:
-  //                             BorderRadius.all(Radius.circular(10.0)),
-  //                         color: Colors.blue,
-  //                       ),
-  //                       child: Column(
-  //                         children: <Widget>[
-  //                           Text(
-  //                             'Today Case',
-  //                             style: TextStyle(
-  //                                 color: Colors.white, fontSize: 14.0),
-  //                           ),
-  //                           SizedBox(height: 12.0),
-  //                           Text(
-  //                             liveCountry.oneResponse.data['todayCases']
-  //                                 .toString(),
-  //                             style: TextStyle(
-  //                                 color: Colors.white, fontSize: 18.0),
-  //                           )
-  //                         ],
-  //                       )),
-  //                   Container(
-  //                       alignment: Alignment.topCenter,
-  //                       margin: EdgeInsets.all(10.0),
-  //                       padding: EdgeInsets.all(8.0),
-  //                       width: MediaQuery.of(context).size.width,
-  //                       height: smallContainerHeight,
-  //                       decoration: BoxDecoration(
-  //                         borderRadius:
-  //                             BorderRadius.all(Radius.circular(10.0)),
-  //                         color: Colors.purple,
-  //                       ),
-  //                       child: Column(
-  //                         children: <Widget>[
-  //                           Text(
-  //                             'Active Case',
-  //                             style: TextStyle(
-  //                                 color: Colors.white, fontSize: 14.0),
-  //                           ),
-  //                           SizedBox(height: 12.0),
-  //                           Text(
-  //                             liveCountry.oneResponse.data['active']
-  //                                 .toString(),
-  //                             style: TextStyle(
-  //                                 color: Colors.white, fontSize: 18.0),
-  //                           )
-  //                         ],
-  //                       )),
-  //                   Container(
-  //                       alignment: Alignment.topCenter,
-  //                       margin: EdgeInsets.all(10.0),
-  //                       padding: EdgeInsets.all(8.0),
-  //                       width: MediaQuery.of(context).size.width,
-  //                       height: smallContainerHeight,
-  //                       decoration: BoxDecoration(
-  //                         borderRadius:
-  //                             BorderRadius.all(Radius.circular(10.0)),
-  //                         color: Colors.redAccent,
-  //                       ),
-  //                       child: Column(
-  //                         children: <Widget>[
-  //                           Text(
-  //                             'Today Death',
-  //                             style: TextStyle(
-  //                                 color: Colors.white, fontSize: 14.0),
-  //                           ),
-  //                           SizedBox(height: 12.0),
-  //                           Text(
-  //                             liveCountry.oneResponse.data['todayDeaths']
-  //                                 .toString(),
-  //                             style: TextStyle(
-  //                                 color: Colors.white, fontSize: 18.0),
-  //                           )
-  //                         ],
-  //                       )),
-  //                   Container(
-  //                       alignment: Alignment.topCenter,
-  //                       margin: EdgeInsets.all(10.0),
-  //                       padding: EdgeInsets.all(8.0),
-  //                       width: MediaQuery.of(context).size.width,
-  //                       height: smallContainerHeight,
-  //                       decoration: BoxDecoration(
-  //                         borderRadius:
-  //                             BorderRadius.all(Radius.circular(10.0)),
-  //                         color: Colors.red,
-  //                       ),
-  //                       child: Column(
-  //                         children: <Widget>[
-  //                           Text(
-  //                             'Total Death',
-  //                             style: TextStyle(
-  //                                 color: Colors.white, fontSize: 14.0),
-  //                           ),
-  //                           SizedBox(height: 12.0),
-  //                           Text(
-  //                             liveCountry.oneResponse.data['deaths']
-  //                                 .toString(),
-  //                             style: TextStyle(
-  //                                 color: Colors.white, fontSize: 18.0),
-  //                           )
-  //                         ],
-  //                       )),
-  //                   Container(
-  //                       alignment: Alignment.topCenter,
-  //                       margin: EdgeInsets.all(10.0),
-  //                       padding: EdgeInsets.all(8.0),
-  //                       width: MediaQuery.of(context).size.width,
-  //                       height: smallContainerHeight,
-  //                       decoration: BoxDecoration(
-  //                         borderRadius:
-  //                             BorderRadius.all(Radius.circular(10.0)),
-  //                         color: Colors.green,
-  //                       ),
-  //                       child: Column(
-  //                         children: <Widget>[
-  //                           Text(
-  //                             'Recovered Case',
-  //                             style: TextStyle(
-  //                                 color: Colors.white, fontSize: 14.0),
-  //                           ),
-  //                           SizedBox(height: 12.0),
-  //                           Text(
-  //                             liveCountry.oneResponse.data['recovered']
-  //                                 .toString(),
-  //                             style: TextStyle(
-  //                                 color: Colors.white, fontSize: 18.0),
-  //                           )
-  //                         ],
-  //                       )),
-  //                 ],
-  //               ),
-  //             )),
-  // );
+class InfoCard extends StatelessWidget {
+  final String image;
+  final String title;
+  final String text;
+  const InfoCard({
+    Key key,
+    this.image,
+    this.title,
+    this.text,
+  }) : super(key: key);
 
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: SizedBox(
+        height: 156,
+        child: Stack(
+          alignment: Alignment.centerLeft,
+          children: <Widget>[
+            Container(
+              height: 136,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 8),
+                    blurRadius: 24,
+                    color: kShadowColor,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Image.network(
+                image,
+                width: 120,
+              ),
+            ),
+            Positioned(
+              left: 130,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                height: 136,
+                width: MediaQuery.of(context).size.width - 170,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      'POPULATION',
+                      style: kTitleTextstyle.copyWith(
+                        fontSize: 10,
+                      ),
+                    ),
+                    Text(
+                      title,
+                      style: kTitleTextstyle.copyWith(
+                        fontSize: 16,
+                      ),
+                    ),
+                    Spacer(),
+                    Text(
+                      'CONTINENT',
+                      style: kTitleTextstyle.copyWith(
+                        fontSize: 10,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        text,
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: SvgPicture.asset("assets/icons/forward.svg"),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
