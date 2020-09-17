@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:dio/dio.dart';
 
-class allData with ChangeNotifier {
+class AllData with ChangeNotifier {
   Response oneResponse, allResponse;
 
   Dio dio = new Dio();
 
-  retrieveOne(String CountryName) async {
+  retrieveOne(String countryName) async {
     // String _url = 'https://disease.sh/v2/countries/' + CountryName;
     String _url = 'https://disease.sh/v3/covid-19/countries/' +
-        CountryName +
+        countryName +
         '?strict=true&allowNull=false';
 
     oneResponse = await dio.get(_url);

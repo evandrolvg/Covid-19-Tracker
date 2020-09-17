@@ -10,7 +10,7 @@ class ListCountry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final country = Provider.of<SCountry>(context);
-    final liveCountry = Provider.of<allData>(context, listen: false);
+    final liveCountry = Provider.of<AllData>(context, listen: false);
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(

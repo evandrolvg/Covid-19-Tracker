@@ -23,14 +23,12 @@ class _LivePageState extends State<LivePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     controller.addListener(onScroll);
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     controller.dispose();
     super.dispose();
   }
@@ -43,7 +41,7 @@ class _LivePageState extends State<LivePage> {
 
   @override
   Widget build(BuildContext context) {
-    final liveCountry = Provider.of<allData>(context);
+    final liveCountry = Provider.of<AllData>(context);
 
     return Scaffold(
       body: SingleChildScrollView(

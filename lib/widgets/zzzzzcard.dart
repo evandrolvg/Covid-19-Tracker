@@ -1,5 +1,5 @@
 import 'package:covid_19/constant.dart';
-import 'package:covid_19/widgets/counter.dart';
+// import 'package:covid_19/widgets/counter.dart';
 import 'package:flutter/material.dart';
 
 class Card extends StatelessWidget {
@@ -32,14 +32,14 @@ class Card extends StatelessWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Counter(
-            color: kInfectedColor,
-            number: n.format((liveCountry.oneResponse.data['cases'])),
-            plus: '+' + n.format(liveCountry.oneResponse.data['todayCases']),
-            title: "Total cases",
-          )
-        ],
+        // children: <Widget>[
+        //   Counter(
+        //     color: kInfectedColor,
+        //     number: n.format((liveCountry.oneResponse.data['cases'])),
+        //     plus: '+' + n.format(liveCountry.oneResponse.data['todayCases']),
+        //     title: "Total cases",
+        //   )
+        // ],
       ),
     );
   }

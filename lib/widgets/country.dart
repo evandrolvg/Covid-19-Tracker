@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CountryPage extends StatelessWidget {
-  double smallContainerHeight = 70.0;
+  final double smallContainerHeight = 70.0;
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<allData>(context, listen: false);
+    final data = Provider.of<AllData>(context, listen: false);
     return Container(
       child: data.allResponse != null
           ? Container(
