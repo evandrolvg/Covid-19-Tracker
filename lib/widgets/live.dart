@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:covid_19/widgets/my_header.dart';
-//import 'package:covid_19/widgets/info_screen.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:covid_19/constant.dart';
 import 'package:covid_19/widgets/counter.dart';
 import 'package:covid_19/widgets/list_country.dart';
 import 'package:covid_19/Provider/api_data.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+// import 'package:covid_19/widgets/goomap.dart';
 
 class LivePage extends StatefulWidget {
   @override
@@ -20,6 +25,9 @@ class _LivePageState extends State<LivePage> {
   double smallContainerHeight = 70.0;
   final controller = ScrollController();
   double offset = 0;
+
+  double _latitude;
+  double _longitude;
 
   @override
   void initState() {
@@ -39,10 +47,52 @@ class _LivePageState extends State<LivePage> {
     });
   }
 
+  Set<Marker> markers = Set();
+  // Completer<GoogleMapController> _controller = Completer();
+  GoogleMapController mapController;
+
+  Future<void> addMarker(liveCountry) async {
+    // void addMarker(liveCountry) async {
+    // setState(() {
+    // Create a new marker
+    Marker resultMarker = Marker(
+      markerId: MarkerId(liveCountry.oneResponse.data['countryInfo']['flag']),
+      infoWindow: InfoWindow(
+          title: 'CONTINENT ' +
+              liveCountry.oneResponse.data['continent'].toString(),
+          snippet: 'POPULATION ' +
+              n.format(liveCountry.oneResponse.data['population'])),
+      position: LatLng(
+          (liveCountry.oneResponse.data['countryInfo']['lat'] as num)
+              .toDouble(),
+          (liveCountry.oneResponse.data['countryInfo']['long'] as num)
+              .toDouble()),
+    );
+    print('----- COUNTRY_MARKER:');
+    print(liveCountry.oneResponse.data['country']);
+    // Add it to Set
+    markers.add(resultMarker);
+    // });
+  }
+
+  void updateLatLng(lat, lng) async {
+    setState(() {
+      if (lat == null) {
+        lat = 0;
+        lng = 0;
+      }
+      _latitude = lat;
+      _longitude = lng;
+      print('----- LONGITUDE: $_longitude');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final liveCountry = Provider.of<AllData>(context);
+    addMarker(liveCountry);
 
+    // print(liveCountry.oneResponse.data);
     return Scaffold(
       body: SingleChildScrollView(
         controller: controller,
@@ -180,44 +230,83 @@ class _LivePageState extends State<LivePage> {
                                   liveCountry.oneResponse.data['todayDeaths']),
                         ),
                         SizedBox(height: 20),
-                        //MAPS
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Spread of Virus",
-                              style: kTitleTextstyle,
-                            ),
-                            Text(
-                              "See details",
-                              style: TextStyle(
-                                color: kPrimaryColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                        //-----------------------------MAPS
                         Container(
-                          margin: EdgeInsets.only(top: 20),
-                          padding: EdgeInsets.all(20),
-                          height: 178,
+                          margin: EdgeInsets.only(top: 10),
+                          // padding: EdgeInsets.all(5),
+                          height: 400,
                           width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 10),
-                                blurRadius: 30,
-                                color: kShadowColor,
-                              ),
-                            ],
-                          ),
-                          child: Image.asset(
-                            "assets/images/map.png",
-                            fit: BoxFit.contain,
+                          child: GoogleMap(
+                            // onMapCreated: _onMapCreated,
+                            initialCameraPosition: CameraPosition(
+                              // target: LatLng(
+                              //     (liveCountry.oneResponse.data['countryInfo']
+                              //             ['lat'] as num)
+                              //         .toDouble(),
+                              //     (liveCountry.oneResponse.data['countryInfo']
+                              //             ['long'] as num)
+                              //         .toDouble()),
+
+                              target: (_latitude != null)
+                                  ? LatLng(_latitude, _longitude)
+                                  : LatLng(
+                                      (liveCountry.oneResponse
+                                                  .data['countryInfo']['lat']
+                                              as num)
+                                          .toDouble(),
+                                      (liveCountry.oneResponse
+                                                  .data['countryInfo']['long']
+                                              as num)
+                                          .toDouble()),
+                              zoom: 3.0,
+                            ),
+                            markers: markers,
+                            onMapCreated: (GoogleMapController controller) {
+                              mapController = controller;
+                              // _controller.complete(controller);
+                              addMarker(liveCountry);
+                              updateLatLng(
+                                  (liveCountry.oneResponse.data['countryInfo']
+                                          ['lat'] as num)
+                                      .toDouble(),
+                                  (liveCountry.oneResponse.data['countryInfo']
+                                          ['long'] as num)
+                                      .toDouble());
+                            },
                           ),
                         ),
+
+                        //   child: SizedBox(
+                        //     height: 156,
+                        //     child: Stack(
+                        //       alignment: Alignment.centerLeft,
+                        //       children: <Widget>[
+                        //         new GoogleMap(
+                        //           onMapCreated: _onMapCreated,
+                        //           initialCameraPosition: CameraPosition(
+                        //             // target: LatLng(45.521563, -122.677433),
+                        //             target: LatLng(
+                        //                 (liveCountry.oneResponse
+                        //                             .data['countryInfo']['lat']
+                        //                         as num)
+                        //                     .toDouble(),
+                        //                 (liveCountry.oneResponse
+                        //                             .data['countryInfo']['long']
+                        //                         as num)
+                        //                     .toDouble()),
+                        //             zoom: 3.0,
+                        //           ),
+                        //           // scrollGesturesEnabled: false,
+                        //           // zoomGesturesEnabled: false,
+                        //           // myLocationButtonEnabled: false,
+                        //           // gestureRecognizers: Set()
+                        //           //   ..add(Factory<PanGestureRecognizer>(
+                        //           //       () => PanGestureRecognizer())),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

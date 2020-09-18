@@ -53,7 +53,6 @@ class MyApp extends StatelessWidget {
 
 class HomeScreen extends StatelessWidget {
   @override
-  @override
   Widget build(BuildContext context) {
     final liveCountry = Provider.of<AllData>(context, listen: false);
     final country = Provider.of<SCountry>(context, listen: false);
@@ -92,7 +91,7 @@ class HomeScreen extends StatelessWidget {
           SizedBox(height: 50.0),
           Container(
               child: Text(
-            'v 1.0.1',
+            'v 1.0.0',
             style: TextStyle(fontWeight: FontWeight.w300),
           )),
         ],

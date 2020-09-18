@@ -26,7 +26,7 @@ class ListCountry extends StatelessWidget {
         body: Column(
           children: <Widget>[
             Container(
-              height: MediaQuery.of(context).size.height,
+              height: 500,
               child: CountryListView(
                 showDialCode: false,
                 scrollPhysics: BouncingScrollPhysics(),
