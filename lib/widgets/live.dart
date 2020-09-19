@@ -1,17 +1,16 @@
 import 'dart:async';
 
-import 'package:covid_19/widgets/my_header.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:covid_19/constant.dart';
-import 'package:covid_19/widgets/counter.dart';
-import 'package:covid_19/widgets/list_country.dart';
 import 'package:covid_19/Provider/api_data.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
+import 'package:covid_19/constant.dart';
+import 'package:covid_19/widgets/my_header.dart';
+import 'package:covid_19/widgets/counter.dart';
+import 'package:covid_19/widgets/infocard.dart';
+import 'package:covid_19/widgets/chart_radial.dart';
+import 'package:covid_19/widgets/list_country.dart';
 // import 'package:covid_19/widgets/goomap.dart';
 
 class LivePage extends StatefulWidget {
@@ -20,12 +19,10 @@ class LivePage extends StatefulWidget {
 }
 
 class _LivePageState extends State<LivePage> {
-  var n = NumberFormat.currency(locale: 'pt_BR', symbol: '', decimalDigits: 0);
-  final d = new DateFormat('dd MMMM, hh:mm a');
-  double smallContainerHeight = 70.0;
+  //SCROLL
   final controller = ScrollController();
   double offset = 0;
-
+  //MAPS
   double _latitude;
   double _longitude;
 
@@ -68,8 +65,8 @@ class _LivePageState extends State<LivePage> {
           (liveCountry.oneResponse.data['countryInfo']['long'] as num)
               .toDouble()),
     );
-    print('----- COUNTRY_MARKER:');
-    print(liveCountry.oneResponse.data['country']);
+    // print('----- COUNTRY_MARKER:');
+    // print(liveCountry.oneResponse.data['country']);
     // Add it to Set
     markers.add(resultMarker);
     // });
@@ -83,13 +80,36 @@ class _LivePageState extends State<LivePage> {
       }
       _latitude = lat;
       _longitude = lng;
-      print('----- LONGITUDE: $_longitude');
+      // print('----- LONGITUDE: $_longitude');
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final liveCountry = Provider.of<AllData>(context);
+    double perCritActiv = liveCountry.oneResponse != null
+        ? (liveCountry.oneResponse.data['critical'] /
+                liveCountry.oneResponse.data['cases']) *
+            100
+        : 0;
+    double perActivTotal = liveCountry.oneResponse != null
+        ? (liveCountry.oneResponse.data['active'] /
+                liveCountry.oneResponse.data['cases']) *
+            100
+        : 0;
+
+    double taxMort = liveCountry.oneResponse != null
+        ? (liveCountry.oneResponse.data['deaths'] /
+                liveCountry.oneResponse.data['cases']) *
+            100
+        : 0;
+
+    double taxRec = liveCountry.oneResponse != null
+        ? (liveCountry.oneResponse.data['recovered'] /
+                liveCountry.oneResponse.data['cases']) *
+            100
+        : 0;
+
     addMarker(liveCountry);
 
     // print(liveCountry.oneResponse.data);
@@ -100,12 +120,14 @@ class _LivePageState extends State<LivePage> {
             ? Center(child: Text('Loading data...'))
             : Column(
                 children: <Widget>[
+                  //-----------------------------HEADER-----------------------------
                   MyHeader(
                     image: "assets/icons/Drcorona.svg",
                     textTop: "All you need",
                     textBottom: "is stay at home.",
                     offset: offset,
                   ),
+                  //-----------------------------SELECT COUNTRY-----------------------------
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 20),
                     padding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
@@ -152,7 +174,7 @@ class _LivePageState extends State<LivePage> {
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: <Widget>[
-                        //INFO COUNTRY
+                        //-----------------------------INFO COUNTRY-----------------------------
                         InfoCard(
                             image: liveCountry
                                 .oneResponse.data['countryInfo']['flag']
@@ -161,7 +183,7 @@ class _LivePageState extends State<LivePage> {
                                 liveCountry.oneResponse.data['population']),
                             text: liveCountry.oneResponse.data['continent']),
                         SizedBox(height: 10),
-                        //CASES UPDATE
+                        //-----------------------------CASES UPDATE-----------------------------
                         Row(
                           children: <Widget>[
                             RichText(
@@ -189,7 +211,7 @@ class _LivePageState extends State<LivePage> {
                           ],
                         ),
                         SizedBox(height: 10),
-                        //TOTAL CASES
+                        //-----------------------------TOTAL CASES-----------------------------
                         Counter(
                           color: kInfectedColor,
                           number:
@@ -200,15 +222,25 @@ class _LivePageState extends State<LivePage> {
                           title: "Total cases",
                         ),
                         SizedBox(height: 10),
-                        //ACTIVES
+                        //-----------------------------ACTIVES-----------------------------
                         Counter(
-                            color: kActiveColor,
-                            number: n
-                                .format(liveCountry.oneResponse.data['active']),
-                            title: "Total active",
-                            plus: ''),
+                          color: kActiveColor,
+                          number:
+                              n.format(liveCountry.oneResponse.data['active']),
+                          title: "Total active",
+                          plus: perc.format(perActivTotal) + '% of total cases',
+                        ),
                         SizedBox(height: 10),
-                        //RECOVERED
+                        //-----------------------------CRITICAL-----------------------------
+                        Counter(
+                          color: kCriticalColor,
+                          number: n
+                              .format(liveCountry.oneResponse.data['critical']),
+                          title: "Critical cases",
+                          plus: perc.format(perCritActiv) + '% of total cases',
+                        ),
+                        SizedBox(height: 20),
+                        //-----------------------------RECOVERED-----------------------------
                         Counter(
                           color: kRecovercolor,
                           number: n.format(
@@ -219,7 +251,17 @@ class _LivePageState extends State<LivePage> {
                                   .oneResponse.data['todayRecovered']),
                         ),
                         SizedBox(height: 10),
-                        //DEATHS
+                        ChartRadial(
+                            sizeHeight: 220.0,
+                            sizeWidth: 220.0,
+                            number: taxRec,
+                            title: 'Recovery rate',
+                            color1: kRecovercolor,
+                            color2: kShadowColor,
+                            plus: ''),
+                        SizedBox(height: 10),
+
+                        //-----------------------------DEATHS-----------------------------
                         Counter(
                           color: kDeathColor,
                           number:
@@ -229,185 +271,69 @@ class _LivePageState extends State<LivePage> {
                               n.format(
                                   liveCountry.oneResponse.data['todayDeaths']),
                         ),
+                        SizedBox(height: 10),
+                        ChartRadial(
+                            sizeHeight: 220.0,
+                            sizeWidth: 220.0,
+                            number: taxMort,
+                            title: 'Mortality rate',
+                            color1: kDeathColor,
+                            color2: kShadowColor,
+                            plus: ''),
+                        SizedBox(height: 10),
+
+                        //-----------------------------TESTS-----------------------------
+                        Counter(
+                          color: kPrimaryColor,
+                          number:
+                              n.format(liveCountry.oneResponse.data['tests']),
+                          title: "Total tests",
+                          plus: '',
+                        ),
                         SizedBox(height: 20),
-                        //-----------------------------MAPS
+
+                        //-----------------------------MAPS-----------------------------
                         Container(
                           margin: EdgeInsets.only(top: 10),
                           // padding: EdgeInsets.all(5),
                           height: 400,
                           width: double.infinity,
-                          child: GoogleMap(
-                            // onMapCreated: _onMapCreated,
-                            initialCameraPosition: CameraPosition(
-                              // target: LatLng(
-                              //     (liveCountry.oneResponse.data['countryInfo']
-                              //             ['lat'] as num)
-                              //         .toDouble(),
-                              //     (liveCountry.oneResponse.data['countryInfo']
-                              //             ['long'] as num)
-                              //         .toDouble()),
-
-                              target: (_latitude != null)
-                                  ? LatLng(_latitude, _longitude)
-                                  : LatLng(
-                                      (liveCountry.oneResponse
-                                                  .data['countryInfo']['lat']
-                                              as num)
-                                          .toDouble(),
-                                      (liveCountry.oneResponse
-                                                  .data['countryInfo']['long']
-                                              as num)
-                                          .toDouble()),
-                              zoom: 3.0,
-                            ),
-                            markers: markers,
-                            onMapCreated: (GoogleMapController controller) {
-                              mapController = controller;
-                              // _controller.complete(controller);
-                              addMarker(liveCountry);
-                              updateLatLng(
-                                  (liveCountry.oneResponse.data['countryInfo']
-                                          ['lat'] as num)
-                                      .toDouble(),
-                                  (liveCountry.oneResponse.data['countryInfo']
-                                          ['long'] as num)
-                                      .toDouble());
-                            },
-                          ),
+                          // child: GoogleMap(
+                          //   // onMapCreated: _onMapCreated,
+                          //   initialCameraPosition: CameraPosition(
+                          //     target: (_latitude != null)
+                          //         ? LatLng(_latitude, _longitude)
+                          //         : LatLng(
+                          //             (liveCountry.oneResponse
+                          //                         .data['countryInfo']['lat']
+                          //                     as num)
+                          //                 .toDouble(),
+                          //             (liveCountry.oneResponse
+                          //                         .data['countryInfo']['long']
+                          //                     as num)
+                          //                 .toDouble()),
+                          //     zoom: 3.0,
+                          //   ),
+                          //   markers: markers,
+                          //   onMapCreated: (GoogleMapController controller) {
+                          //     mapController = controller;
+                          //     // _controller.complete(controller);
+                          //     addMarker(liveCountry);
+                          //     updateLatLng(
+                          //         (liveCountry.oneResponse.data['countryInfo']
+                          //                 ['lat'] as num)
+                          //             .toDouble(),
+                          //         (liveCountry.oneResponse.data['countryInfo']
+                          //                 ['long'] as num)
+                          //             .toDouble());
+                          //   },
+                          // ),
                         ),
-
-                        //   child: SizedBox(
-                        //     height: 156,
-                        //     child: Stack(
-                        //       alignment: Alignment.centerLeft,
-                        //       children: <Widget>[
-                        //         new GoogleMap(
-                        //           onMapCreated: _onMapCreated,
-                        //           initialCameraPosition: CameraPosition(
-                        //             // target: LatLng(45.521563, -122.677433),
-                        //             target: LatLng(
-                        //                 (liveCountry.oneResponse
-                        //                             .data['countryInfo']['lat']
-                        //                         as num)
-                        //                     .toDouble(),
-                        //                 (liveCountry.oneResponse
-                        //                             .data['countryInfo']['long']
-                        //                         as num)
-                        //                     .toDouble()),
-                        //             zoom: 3.0,
-                        //           ),
-                        //           // scrollGesturesEnabled: false,
-                        //           // zoomGesturesEnabled: false,
-                        //           // myLocationButtonEnabled: false,
-                        //           // gestureRecognizers: Set()
-                        //           //   ..add(Factory<PanGestureRecognizer>(
-                        //           //       () => PanGestureRecognizer())),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),
                 ],
               ),
-      ),
-    );
-  }
-}
-
-class InfoCard extends StatelessWidget {
-  final String image;
-  final String title;
-  final String text;
-  const InfoCard({
-    Key key,
-    this.image,
-    this.title,
-    this.text,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: SizedBox(
-        height: 156,
-        child: Stack(
-          alignment: Alignment.centerLeft,
-          children: <Widget>[
-            Container(
-              height: 136,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    offset: Offset(0, 8),
-                    blurRadius: 24,
-                    color: kShadowColor,
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: Image.network(
-                image,
-                width: 120,
-              ),
-            ),
-            Positioned(
-              left: 130,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                height: 136,
-                width: MediaQuery.of(context).size.width - 170,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'POPULATION',
-                      style: kTitleTextstyle.copyWith(
-                        fontSize: 10,
-                      ),
-                    ),
-                    Text(
-                      title,
-                      style: kTitleTextstyle.copyWith(
-                        fontSize: 16,
-                      ),
-                    ),
-                    Spacer(),
-                    Text(
-                      'CONTINENT',
-                      style: kTitleTextstyle.copyWith(
-                        fontSize: 10,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        text,
-                        maxLines: 4,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: SvgPicture.asset("assets/icons/forward.svg"),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
