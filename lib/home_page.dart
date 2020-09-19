@@ -3,6 +3,7 @@ import 'package:covid_19/widgets/country.dart';
 import 'package:covid_19/widgets/info_screen.dart';
 import 'package:covid_19/constant.dart';
 import 'package:flutter/material.dart';
+import 'package:covid_19/views/newspage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -45,7 +46,7 @@ class _HomePageState extends State<HomePage>
           body: TabBarView(
               physics: BouncingScrollPhysics(),
               controller: _tabController,
-              children: [LivePage(), CountryPage(), InfoScreen()]),
+              children: [LivePage(), NewsPage(), InfoScreen()]),
           bottomNavigationBar: TabBar(
             controller: _tabController,
             tabs: [
@@ -53,7 +54,7 @@ class _HomePageState extends State<HomePage>
                 icon: new Icon(Icons.home),
               ),
               Tab(
-                icon: Icon(Icons.account_balance),
+                icon: Icon(Icons.announcement),
               ),
               Tab(
                 icon: Icon(Icons.info),

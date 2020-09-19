@@ -18,7 +18,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AllData()),
-        ChangeNotifierProvider(create: (_) => SCountry())
+        ChangeNotifierProvider(create: (_) => SCountry()),
+        // ChangeNotifierProvider(create: (_) => NewsArticleListViewModel())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

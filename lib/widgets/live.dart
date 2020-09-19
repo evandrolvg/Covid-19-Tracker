@@ -12,6 +12,7 @@ import 'package:covid_19/widgets/counter_min.dart';
 import 'package:covid_19/widgets/infocard.dart';
 import 'package:covid_19/widgets/chart_radial.dart';
 import 'package:covid_19/widgets/list_country.dart';
+
 // import 'package:covid_19/widgets/goomap.dart';
 
 class LivePage extends StatefulWidget {

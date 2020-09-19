@@ -24,4 +24,6 @@ class AllData with ChangeNotifier {
     allResponse = await dio.get(_url);
     notifyListeners();
   }
+
+  // 3cddb57701f3475c8f4b2fb855f2cadd
 }
