@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:covid_19/constant.dart';
 import 'package:covid_19/widgets/my_header.dart';
 import 'package:covid_19/widgets/counter.dart';
+import 'package:covid_19/widgets/counter_min.dart';
 import 'package:covid_19/widgets/infocard.dart';
 import 'package:covid_19/widgets/chart_radial.dart';
 import 'package:covid_19/widgets/list_country.dart';
@@ -291,6 +292,69 @@ class _LivePageState extends State<LivePage> {
                           plus: '',
                         ),
                         SizedBox(height: 20),
+                        //-----------------------------PER MILLION-----------------------------
+                        Row(
+                          children: <Widget>[
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "Per one million\n",
+                                    style: kTitleTextstyle,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        //-----------------------------TOTAL CASES-----------------------------
+                        CounterMin(
+                          color: kInfectedColor,
+                          number: n.format((liveCountry
+                              .oneResponse.data['casesPerOneMillion'])),
+                          title: "Cases",
+                        ),
+                        SizedBox(height: 10),
+                        //-----------------------------ACTIVES-----------------------------
+                        CounterMin(
+                          color: kActiveColor,
+                          number: n.format((liveCountry
+                              .oneResponse.data['activePerOneMillion'])),
+                          title: "Active",
+                        ),
+                        SizedBox(height: 10),
+                        //-----------------------------CRITICAL-----------------------------
+                        CounterMin(
+                          color: kCriticalColor,
+                          number: n.format((liveCountry
+                              .oneResponse.data['criticalPerOneMillion'])),
+                          title: "Critical",
+                        ),
+                        SizedBox(height: 10),
+                        //-----------------------------RECOVERED-----------------------------
+                        CounterMin(
+                          color: kRecovercolor,
+                          number: n.format((liveCountry
+                              .oneResponse.data['recoveredPerOneMillion'])),
+                          title: "Recovered",
+                        ),
+                        SizedBox(height: 10),
+                        //-----------------------------DEATHS-----------------------------
+                        CounterMin(
+                          color: kDeathColor,
+                          number: n.format((liveCountry
+                              .oneResponse.data['deathsPerOneMillion'])),
+                          title: "Deaths",
+                        ),
+                        SizedBox(height: 10),
+                        //-----------------------------TESTS-----------------------------
+                        CounterMin(
+                          color: kPrimaryColor,
+                          number: n.format((liveCountry
+                              .oneResponse.data['testsPerOneMillion'])),
+                          title: "Tests",
+                        ),
+                        SizedBox(height: 10),
 
                         //-----------------------------MAPS-----------------------------
                         Container(

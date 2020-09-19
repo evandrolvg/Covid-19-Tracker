@@ -26,6 +26,8 @@ const kHeadingTextStyle = TextStyle(
 
 const kSubTextStyle = TextStyle(fontSize: 16, color: kTextLightColor);
 
+const kSubMTextStyle = TextStyle(fontSize: 16, color: kBackgroundColor);
+
 const kSubPlusTextStyle =
     TextStyle(fontSize: 13, color: kBodyTextColor, letterSpacing: 2);
 
