@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:covid_19/helper/news.dart';
-import 'package:covid_19/helper/widgets.dart';
+import 'package:covid_19/helper/news_widgets.dart';
 
 class CategoryNews extends StatefulWidget {
   final String newsCategory;
@@ -34,34 +34,7 @@ class _CategoryNewsState extends State<CategoryNews> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "Flutter",
-              style:
-                  TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
-            ),
-            Text(
-              "News",
-              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600),
-            )
-          ],
-        ),
-        actions: <Widget>[
-          Opacity(
-            opacity: 0,
-            child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Icon(
-                  Icons.share,
-                )),
-          )
-        ],
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-      ),
+      appBar: newsBar(),
       body: _loading
           ? Center(
               child: CircularProgressIndicator(),
@@ -81,6 +54,9 @@ class _CategoryNewsState extends State<CategoryNews> {
                           desc: newslist[index].description ?? "",
                           content: newslist[index].content ?? "",
                           posturl: newslist[index].articleUrl ?? "",
+                          publshedAt: DateTime.parse(
+                                  newslist[index].publshedAt.toString()) ??
+                              Null,
                         );
                       }),
                 ),

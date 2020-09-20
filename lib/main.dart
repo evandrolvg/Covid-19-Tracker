@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 import 'package:covid_19/widgets/list_country.dart';
 import 'package:covid_19/constant.dart';
@@ -57,6 +58,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final liveCountry = Provider.of<AllData>(context, listen: false);
     final country = Provider.of<SCountry>(context, listen: false);
+
     Timer(Duration(seconds: 3), () async {
       SharedPreferences pref = await SharedPreferences.getInstance();
       if (pref.getString('country') == null) {

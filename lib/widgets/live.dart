@@ -112,7 +112,7 @@ class _LivePageState extends State<LivePage> {
             100
         : 0;
 
-    addMarker(liveCountry);
+    // addMarker(liveCountry);
 
     // print(liveCountry.oneResponse.data);
     return Scaffold(

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:covid_19/views/article_view.dart';
+import 'package:covid_19/constant.dart';
 
-Widget MyAppBar() {
+Widget newsBar() {
   return AppBar(
     title: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         Text(
-          "Flutter",
+          "COVID-19",
           style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
         ),
         Text(
@@ -23,13 +24,16 @@ Widget MyAppBar() {
 
 class NewsTile extends StatelessWidget {
   final String imgUrl, title, desc, content, posturl;
+  final DateTime publshedAt;
 
   NewsTile(
       {this.imgUrl,
       this.desc,
       this.title,
       this.content,
-      @required this.posturl});
+      @required this.posturl,
+      // });
+      this.publshedAt});
 
   @override
   Widget build(BuildContext context) {
@@ -80,10 +84,22 @@ class NewsTile extends StatelessWidget {
                     height: 4,
                   ),
                   Text(
+                    // 'teste',
+                    d.format(publshedAt),
+                    maxLines: 2,
+                    style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(
                     desc,
                     maxLines: 2,
                     style: TextStyle(color: Colors.black54, fontSize: 14),
-                  )
+                  ),
                 ],
               ),
             ),

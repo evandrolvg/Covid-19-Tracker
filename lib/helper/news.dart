@@ -7,9 +7,9 @@ import 'package:covid_19/secret.dart';
 class News {
   List<Article> news = [];
 
-  Future<void> getNews() async {
+  Future<void> getNews(String country) async {
     String url =
-        "http://newsapi.org/v2/top-headlines?country=in&excludeDomains=stackoverflow.com&sortBy=publishedAt&language=en&apiKey=${apiKey}";
+        "http://newsapi.org/v2/top-headlines?country=$country&q=covid&excludeDomains=stackoverflow.com&sortBy=publishedAt&language=en&apiKey=$apiKey";
 
     var response = await http.get(url);
 
@@ -39,8 +39,7 @@ class NewsForCategorie {
 
   Future<void> getNewsForCategory(String category) async {
     /*String url = "http://newsapi.org/v2/everything?q=$category&apiKey=${apiKey}";*/
-    String url =
-        "http://newsapi.org/v2/top-headlines?country=in&category=$category&apiKey=${apiKey}";
+    String url = "http://newsapi.org/v2/everything?q=covid&apiKey=${apiKey}";
 
     var response = await http.get(url);
 

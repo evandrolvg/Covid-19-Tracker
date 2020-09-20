@@ -31,11 +31,11 @@ class ListCountry extends StatelessWidget {
                 showDialCode: false,
                 scrollPhysics: BouncingScrollPhysics(),
                 onSelected: (Country countryName) async {
-                  liveCountry.retrieveOne(countryName.name);
+                  liveCountry.retrieveOne(countryName.code);
                   SharedPreferences pref =
                       await SharedPreferences.getInstance();
-                  pref.setString('country', countryName.name);
-                  country.setCountryName(countryName.name);
+                  pref.setString('country', countryName.code);
+                  country.setCountryName(countryName.code);
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => HomePage()));
                 },
