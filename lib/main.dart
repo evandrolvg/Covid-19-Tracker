@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
 import 'package:covid_19/widgets/list_country.dart';
-import 'package:covid_19/constant.dart';
+import 'package:covid_19/helper/constant.dart';
 import 'package:flutter/material.dart';
-import 'package:covid_19/Provider/api_data.dart';
+import 'package:covid_19/helper/api_covid.dart';
 import 'package:covid_19/Provider/country.dart';
 import 'package:covid_19/home_page.dart';
 import 'package:provider/provider.dart';

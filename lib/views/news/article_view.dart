@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:covid_19/helper/news_widgets.dart';
+import 'package:covid_19/views/news/news_widgets.dart';
 
 class ArticleView extends StatefulWidget {
   final String postUrl;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:covid_19/views/article_view.dart';
-import 'package:covid_19/constant.dart';
+import 'package:covid_19/views/news/article_view.dart';
+import 'package:covid_19/helper/constant.dart';
 
 Widget newsBar() {
   return AppBar(

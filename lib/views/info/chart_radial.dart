@@ -1,4 +1,4 @@
-import 'package:covid_19/constant.dart';
+import 'package:covid_19/helper/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_circular_chart/flutter_circular_chart.dart';
 // import 'package:covid_19/constant.dart';

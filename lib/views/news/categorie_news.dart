@@ -1,6 +1,8 @@
+import 'package:covid_19/helper/api_covid.dart';
 import 'package:flutter/material.dart';
-import 'package:covid_19/helper/news.dart';
-import 'package:covid_19/helper/news_widgets.dart';
+import 'package:covid_19/helper/api_news.dart';
+import 'package:covid_19/views/news/news_widgets.dart';
+import 'package:provider/provider.dart';
 
 class CategoryNews extends StatefulWidget {
   final String newsCategory;
@@ -17,22 +19,25 @@ class _CategoryNewsState extends State<CategoryNews> {
 
   @override
   void initState() {
-    getNews();
-    // TODO: implement initState
     super.initState();
   }
 
-  void getNews() async {
+  void getNews(String country) async {
     NewsForCategorie news = NewsForCategorie();
-    await news.getNewsForCategory(widget.newsCategory);
+    await news.getNewsForCategory(country);
     newslist = news.news;
-    setState(() {
-      _loading = false;
-    });
+    if (this._loading) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final liveCountry = Provider.of<AllData>(context);
+    getNews(liveCountry.oneResponse.data['countryInfo']['iso2']);
+
     return Scaffold(
       appBar: newsBar(),
       body: _loading

@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:covid_19/Provider/api_data.dart';
+import 'package:covid_19/helper/api_covid.dart';
 import 'package:provider/provider.dart';
-import 'package:covid_19/constant.dart';
-import 'package:covid_19/widgets/my_header.dart';
-import 'package:covid_19/widgets/counter.dart';
-import 'package:covid_19/widgets/counter_min.dart';
-import 'package:covid_19/widgets/infocard.dart';
-import 'package:covid_19/widgets/chart_radial.dart';
+import 'package:covid_19/helper/constant.dart';
+import 'package:covid_19/views/info/my_header.dart';
+import 'package:covid_19/views/info/counter.dart';
+import 'package:covid_19/views/info/counter_min.dart';
+import 'package:covid_19/views/info/infocard.dart';
+import 'package:covid_19/views/info/chart_radial.dart';
 import 'package:covid_19/widgets/list_country.dart';
 
 // import 'package:covid_19/widgets/goomap.dart';
@@ -25,8 +25,8 @@ class _LivePageState extends State<LivePage> {
   final controller = ScrollController();
   double offset = 0;
   //MAPS
-  double _latitude;
-  double _longitude;
+  // double _latitude;
+  // double _longitude;
 
   @override
   void initState() {
@@ -74,17 +74,17 @@ class _LivePageState extends State<LivePage> {
     // });
   }
 
-  void updateLatLng(lat, lng) async {
-    setState(() {
-      if (lat == null) {
-        lat = 0;
-        lng = 0;
-      }
-      _latitude = lat;
-      _longitude = lng;
-      // print('----- LONGITUDE: $_longitude');
-    });
-  }
+  // void updateLatLng(lat, lng) async {
+  //   setState(() {
+  //     if (lat == null) {
+  //       lat = 0;
+  //       lng = 0;
+  //     }
+  //     _latitude = lat;
+  //     _longitude = lng;
+  //     // print('----- LONGITUDE: $_longitude');
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +119,9 @@ class _LivePageState extends State<LivePage> {
       body: SingleChildScrollView(
         controller: controller,
         child: liveCountry.oneResponse == null
-            ? Center(child: Text('Loading data...'))
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
             : Column(
                 children: <Widget>[
                   //-----------------------------HEADER-----------------------------

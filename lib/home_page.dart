@@ -1,9 +1,8 @@
-import 'package:covid_19/widgets/live.dart';
-import 'package:covid_19/widgets/country.dart';
-import 'package:covid_19/widgets/info_screen.dart';
-import 'package:covid_19/constant.dart';
+import 'package:covid_19/views/info/live.dart';
+import 'package:covid_19/views/about/info_screen.dart';
+import 'package:covid_19/helper/constant.dart';
 import 'package:flutter/material.dart';
-import 'package:covid_19/views/newspage.dart';
+import 'package:covid_19/views/news/newspage.dart';
 
 class HomePage extends StatefulWidget {
   @override

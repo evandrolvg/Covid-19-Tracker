@@ -10,7 +10,7 @@ List<CategorieModel> getCategories() {
   // myCategories.add(categorieModel);
 
   categorieModel = new CategorieModel();
-  categorieModel.categorieName = "World \n(in english)";
+  categorieModel.categorieName = "Official language";
   categorieModel.imageAssetUrl = "assets/images/world.jpg";
   myCategories.add(categorieModel);
 

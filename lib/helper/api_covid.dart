@@ -12,8 +12,6 @@ class AllData with ChangeNotifier {
       String _url = 'https://disease.sh/v3/covid-19/countries/' +
           countryName +
           '?strict=true&allowNull=false';
-      // print(_url);
-      // return false;
 
       oneResponse = await dio.get(_url);
       notifyListeners();

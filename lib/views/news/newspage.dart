@@ -1,13 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:covid_19/Provider/api_data.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:covid_19/helper/data.dart';
-import 'package:covid_19/helper/news_widgets.dart';
+import 'package:covid_19/helper/news_categories.dart';
+import 'package:covid_19/views/news/news_widgets.dart';
 import 'package:covid_19/models/categorie_model.dart';
-import 'package:covid_19/views/categorie_news.dart';
+import 'package:covid_19/views/news/categorie_news.dart';
 
-import '../helper/news.dart';
+import '../../helper/api_news.dart';
 
 class NewsPage extends StatefulWidget {
   @override
@@ -20,9 +17,9 @@ class _NewsPageState extends State<NewsPage> {
 
   List<CategorieModel> categories = List<CategorieModel>();
 
-  void getNews(String country) async {
+  void getNews() async {
     News news = News();
-    await news.getNews(country);
+    await news.getNews();
     newslist = news.news;
     if (this._loading) {
       setState(() {
@@ -34,7 +31,6 @@ class _NewsPageState extends State<NewsPage> {
   @override
   void initState() {
     _loading = true;
-    // TODO: implement initState
     super.initState();
 
     categories = getCategories();
@@ -47,8 +43,8 @@ class _NewsPageState extends State<NewsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final liveCountry = Provider.of<AllData>(context);
-    getNews(liveCountry.oneResponse.data['countryInfo']['iso2']);
+    // final liveCountry = Provider.of<AllData>(context);
+    getNews();
 
     return Scaffold(
       appBar: newsBar(),
