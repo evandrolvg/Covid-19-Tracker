@@ -55,6 +55,7 @@ class MyApp extends StatelessWidget {
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Provider.of<dynamic>(context, listen: false);
     final liveCountry = Provider.of<AllData>(context, listen: false);
     final country = Provider.of<SCountry>(context, listen: false);
 

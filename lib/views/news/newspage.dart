@@ -21,10 +21,12 @@ class _NewsPageState extends State<NewsPage> {
     News news = News();
     await news.getNews();
     newslist = news.news;
-    if (this._loading) {
-      setState(() {
-        _loading = false;
-      });
+    if (this.mounted) {
+      if (this._loading) {
+        setState(() {
+          _loading = false;
+        });
+      }
     }
   }
 

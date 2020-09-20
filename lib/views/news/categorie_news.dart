@@ -26,11 +26,18 @@ class _CategoryNewsState extends State<CategoryNews> {
     NewsForCategorie news = NewsForCategorie();
     await news.getNewsForCategory(country);
     newslist = news.news;
-    if (this._loading) {
-      setState(() {
-        _loading = false;
-      });
+    if (this.mounted) {
+      if (this._loading) {
+        setState(() {
+          _loading = false;
+        });
+      }
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

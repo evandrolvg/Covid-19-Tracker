@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:covid_19/helper/api_covid.dart';
 import 'package:provider/provider.dart';
@@ -45,46 +42,6 @@ class _LivePageState extends State<LivePage> {
       offset = (controller.hasClients) ? controller.offset : 0;
     });
   }
-
-  Set<Marker> markers = Set();
-  // Completer<GoogleMapController> _controller = Completer();
-  GoogleMapController mapController;
-
-  Future<void> addMarker(liveCountry) async {
-    // void addMarker(liveCountry) async {
-    // setState(() {
-    // Create a new marker
-    Marker resultMarker = Marker(
-      markerId: MarkerId(liveCountry.oneResponse.data['countryInfo']['flag']),
-      infoWindow: InfoWindow(
-          title: 'CONTINENT ' +
-              liveCountry.oneResponse.data['continent'].toString(),
-          snippet: 'POPULATION ' +
-              n.format(liveCountry.oneResponse.data['population'])),
-      position: LatLng(
-          (liveCountry.oneResponse.data['countryInfo']['lat'] as num)
-              .toDouble(),
-          (liveCountry.oneResponse.data['countryInfo']['long'] as num)
-              .toDouble()),
-    );
-    // print('----- COUNTRY_MARKER:');
-    // print(liveCountry.oneResponse.data['country']);
-    // Add it to Set
-    markers.add(resultMarker);
-    // });
-  }
-
-  // void updateLatLng(lat, lng) async {
-  //   setState(() {
-  //     if (lat == null) {
-  //       lat = 0;
-  //       lng = 0;
-  //     }
-  //     _latitude = lat;
-  //     _longitude = lng;
-  //     // print('----- LONGITUDE: $_longitude');
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
