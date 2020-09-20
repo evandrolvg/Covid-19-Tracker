@@ -1,5 +1,6 @@
-import 'package:covid_19/helper/api_covid.dart';
 import 'package:flutter/material.dart';
+import 'package:covid_19/helper/constant.dart';
+import 'package:covid_19/helper/api_covid.dart';
 import 'package:covid_19/helper/api_news.dart';
 import 'package:covid_19/views/news/news_widgets.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +27,7 @@ class _CategoryNewsState extends State<CategoryNews> {
     NewsForCategorie news = NewsForCategorie();
     await news.getNewsForCategory(country);
     newslist = news.news;
+
     if (this.mounted) {
       if (this._loading) {
         setState(() {
@@ -53,25 +55,47 @@ class _CategoryNewsState extends State<CategoryNews> {
             )
           : SingleChildScrollView(
               child: Container(
-                child: Container(
-                  margin: EdgeInsets.only(top: 16),
-                  child: ListView.builder(
-                      itemCount: newslist.length,
-                      shrinkWrap: true,
-                      physics: ClampingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return NewsTile(
-                          imgUrl: newslist[index].urlToImage ?? "",
-                          title: newslist[index].title ?? "",
-                          desc: newslist[index].description ?? "",
-                          content: newslist[index].content ?? "",
-                          posturl: newslist[index].articleUrl ?? "",
-                          publshedAt: DateTime.parse(
-                                  newslist[index].publshedAt.toString()) ??
-                              Null,
-                        );
-                      }),
-                ),
+                child: newslist.isEmpty
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 100),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Image(
+                                    image: AssetImage('assets/images/news.png'),
+                                    height: 35),
+                                SizedBox(height: 10),
+                                Text('No news', style: kSubTextStyle),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(
+                        margin: EdgeInsets.only(top: 16),
+                        child: ListView.builder(
+                            itemCount: newslist.length,
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return NewsTile(
+                                imgUrl: newslist[index].urlToImage ?? "",
+                                title: newslist[index].title ?? "",
+                                desc: newslist[index].description ?? "",
+                                content: newslist[index].content ?? "",
+                                posturl: newslist[index].articleUrl ?? "",
+                                publshedAt: DateTime.parse(newslist[index]
+                                        .publshedAt
+                                        .toString()) ??
+                                    Null,
+                              );
+                            }),
+                      ),
               ),
             ),
     );

@@ -315,44 +315,6 @@ class _LivePageState extends State<LivePage> {
                           title: "Tests",
                         ),
                         SizedBox(height: 10),
-
-                        //-----------------------------MAPS-----------------------------
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          // padding: EdgeInsets.all(5),
-                          height: 400,
-                          width: double.infinity,
-                          // child: GoogleMap(
-                          //   // onMapCreated: _onMapCreated,
-                          //   initialCameraPosition: CameraPosition(
-                          //     target: (_latitude != null)
-                          //         ? LatLng(_latitude, _longitude)
-                          //         : LatLng(
-                          //             (liveCountry.oneResponse
-                          //                         .data['countryInfo']['lat']
-                          //                     as num)
-                          //                 .toDouble(),
-                          //             (liveCountry.oneResponse
-                          //                         .data['countryInfo']['long']
-                          //                     as num)
-                          //                 .toDouble()),
-                          //     zoom: 3.0,
-                          //   ),
-                          //   markers: markers,
-                          //   onMapCreated: (GoogleMapController controller) {
-                          //     mapController = controller;
-                          //     // _controller.complete(controller);
-                          //     addMarker(liveCountry);
-                          //     updateLatLng(
-                          //         (liveCountry.oneResponse.data['countryInfo']
-                          //                 ['lat'] as num)
-                          //             .toDouble(),
-                          //         (liveCountry.oneResponse.data['countryInfo']
-                          //                 ['long'] as num)
-                          //             .toDouble());
-                          //   },
-                          // ),
-                        ),
                       ],
                     ),
                   ),
