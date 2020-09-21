@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:covid_19/widgets/list_country.dart';
 import 'package:covid_19/helper/constant.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'COVID-19',
+        title: 'COVID-19 Tracker',
         theme: ThemeData(
           scaffoldBackgroundColor: kBackgroundColor,
           fontFamily: "Poppins",
@@ -46,11 +45,6 @@ class MyApp extends StatelessWidget {
     // );
   }
 }
-
-// class HomeScreen extends StatefulWidget {
-//   @override
-//   _HomeScreenState createState() => _HomeScreenState();
-// }
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -75,30 +69,14 @@ class HomeScreen extends StatelessWidget {
     });
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Center(
-            child: Container(
-                margin: EdgeInsets.all(5.0),
-                height: 125.0,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image:
-                            ExactAssetImage('assets/images/splashscreen.jpeg'),
-                        fit: BoxFit.fill)),
-                child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 2.0))),
-          ),
-          SizedBox(height: 50.0),
-          Container(
-              child: Text(
-            'v 1.0.0',
-            style: TextStyle(fontWeight: FontWeight.w300),
-          )),
-        ],
-      ),
+      body: Container(
+          margin: EdgeInsets.all(0.0),
+          height: double.infinity,
+          width: double.infinity,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: ExactAssetImage('assets/images/covid.jpg'),
+                  fit: BoxFit.fill))),
     );
   }
 }
