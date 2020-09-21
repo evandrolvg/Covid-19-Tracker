@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false,
+      onWillPop: () async => true,
       // color: Colors.yellow,
       child: DefaultTabController(
         length: 3,

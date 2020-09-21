@@ -1,5 +1,5 @@
 name: covid_19
-description: A new Flutter project.
+description: COVID-19 Tracker has real-time statistics, news and info about coronavirus.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -28,8 +28,8 @@ dependencies:
   google_maps_flutter: ^0.5.32
   location: ^3.0.1
   flutter_circular_chart: ^0.1.0
-  http: ^0.12.0+2
   webview_flutter: ^0.3.16
+ 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

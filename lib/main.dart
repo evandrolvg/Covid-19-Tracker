@@ -55,7 +55,8 @@ class HomeScreen extends StatelessWidget {
 
     Timer(Duration(seconds: 3), () async {
       SharedPreferences pref = await SharedPreferences.getInstance();
-      if (pref.getString('country') == null) {
+
+      if (pref == null || pref.getString('country') == null) {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => ListCountry()));
         liveCountry.retriveAll();

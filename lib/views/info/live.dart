@@ -21,9 +21,6 @@ class _LivePageState extends State<LivePage> {
   //SCROLL
   final controller = ScrollController();
   double offset = 0;
-  //MAPS
-  // double _latitude;
-  // double _longitude;
 
   @override
   void initState() {
@@ -69,15 +66,77 @@ class _LivePageState extends State<LivePage> {
             100
         : 0;
 
-    // addMarker(liveCountry);
-
-    // print(liveCountry.oneResponse.data);
     return Scaffold(
       body: SingleChildScrollView(
         controller: controller,
-        child: liveCountry.oneResponse == null
-            ? Center(
-                child: CircularProgressIndicator(),
+        child: liveCountry.oneResponse == null ||
+                liveCountry.oneResponse.data['code'] == 404 ||
+                liveCountry.oneResponse.data['country'] == null
+            ? Column(
+                children: <Widget>[
+                  //-----------------------------HEADER-----------------------------
+                  MyHeader(
+                    image: "assets/icons/Drcorona.svg",
+                    textTop: "All you need",
+                    textBottom: "is stay at home.",
+                    offset: offset,
+                  ),
+                  //-----------------------------SELECT COUNTRY-----------------------------
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                    height: 60,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(
+                        color: Color(0xFFE5E5E5),
+                      ),
+                    ),
+                    child: RaisedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ListCountry()));
+                      },
+                      color: Colors.transparent,
+                      elevation: 0.0,
+                      child: Padding(
+                        padding: EdgeInsets.all(0.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            SvgPicture.asset("assets/icons/maps-and-flags.svg"),
+                            Text(
+                              'Select another country',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: kPrimaryColor),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(children: <Widget>[
+                      // CircularProgressIndicator(),
+                      Text(
+                        "Country not found or doesn't have any cases",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: kCriticalColor,
+                        ),
+                      ),
+                    ]),
+                  ),
+                ],
               )
             : Column(
                 children: <Widget>[
