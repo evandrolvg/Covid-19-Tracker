@@ -1,6 +1,7 @@
 import 'package:covid_19/views/info/live.dart';
 import 'package:covid_19/views/about/info_screen.dart';
 import 'package:covid_19/helper/constant.dart';
+import 'package:covid_19/widgets/nearby/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:covid_19/views/news/newspage.dart';
 
@@ -43,9 +44,9 @@ class _HomePageState extends State<HomePage>
         length: 3,
         child: new Scaffold(
           body: TabBarView(
-              physics: BouncingScrollPhysics(),
-              controller: _tabController,
-              children: [LivePage(), NewsPage(), InfoScreen()]),
+              physics: BouncingScrollPhysics(), controller: _tabController,
+              // children: [LivePage(), NewsPage(), InfoScreen()]),
+              children: [LivePage(), NewsPage(), WelcomeScreen()]),
           bottomNavigationBar: TabBar(
             controller: _tabController,
             tabs: [

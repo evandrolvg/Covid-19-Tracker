@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'package:covid_19/widgets/list_country.dart';
 import 'package:covid_19/helper/constant.dart';
+import 'package:covid_19/widgets/nearby/login.dart';
+import 'package:covid_19/widgets/nearby/nearby_interface.dart';
+import 'package:covid_19/widgets/nearby/registration.dart';
+import 'package:covid_19/widgets/nearby/welcome_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:covid_19/helper/api_covid.dart';
 import 'package:covid_19/Provider/country.dart';
@@ -8,7 +13,14 @@ import 'package:covid_19/home_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(MyApp());
+// void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(
+    MyApp(),
+  );
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -29,6 +41,12 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: HomeScreen(),
+        routes: {
+          WelcomeScreen.id: (context) => WelcomeScreen(),
+          RegistrationScreen.id: (context) => RegistrationScreen(),
+          LoginScreen.id: (context) => LoginScreen(),
+          NearbyInterface.id: (context) => NearbyInterface(),
+        },
       ),
     );
 
