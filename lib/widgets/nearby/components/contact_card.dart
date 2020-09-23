@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'bottom_sheet_text.dart';
 
@@ -6,17 +7,17 @@ class ContactCard extends StatelessWidget {
   ContactCard(
       {this.imagePath,
       this.email,
-      this.infection,
+      this.infected,
       this.contactUsername,
       this.contactTime,
       this.contactLocation});
 
   final String imagePath;
   final String email;
-  final String infection;
+  final bool infected;
   final String contactUsername;
   final DateTime contactTime;
-  final String contactLocation;
+  final LatLng contactLocation;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,7 @@ class ContactCard extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        subtitle: Text(infection),
+        subtitle: Text(infected ? 'Yes' : 'No'),
         onTap: () => showModalBottomSheet(
             context: context,
             builder: (builder) {
@@ -51,9 +52,10 @@ class ContactCard extends StatelessWidget {
                         result: contactTime.toString()),
                     SizedBox(height: 5.0),
                     BottomSheetText(
-                        question: 'Contact Location', result: contactLocation),
+                        question: 'Contact Location',
+                        result: contactLocation.toString()),
                     SizedBox(height: 5.0),
-                    BottomSheetText(question: 'Times Contacted', result: '3'),
+                    // BottomSheetText(question: 'Times Contacted', result: '3'),
                   ],
                 ),
               );

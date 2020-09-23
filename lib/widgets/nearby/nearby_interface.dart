@@ -5,6 +5,7 @@ import 'package:covid_19/widgets/nearby/components/contact_card.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:covid_19/helper/constant.dart';
@@ -19,6 +20,7 @@ class NearbyInterface extends StatefulWidget {
 class _NearbyInterfaceState extends State<NearbyInterface> {
   double offset = 0;
   Location location = Location();
+  LocationData currentLocation;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Strategy strategy = Strategy.P2P_STAR;
   auth.User loggedInUser;
@@ -27,6 +29,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
   List<dynamic> contactTraces = [];
   List<dynamic> contactTimes = [];
   List<dynamic> contactLocations = [];
+  List<dynamic> contactInfected = [];
 
   void addContactsToList() async {
     await getCurrentUser();
@@ -39,10 +42,12 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
         .listen((snapshot) {
       for (var doc in snapshot.docs) {
         String currUsername = doc.data()['username'];
+        bool currInfected =
+            doc.data()['infected'] != null ? doc.data()['infected'] : false;
         DateTime currTime = doc.data().containsKey('contact time')
             ? (doc.data()['contact time'] as Timestamp).toDate()
             : null;
-        String currLocation = doc.data().containsKey('contact location')
+        GeoPoint currLocation = doc.data().containsKey('contact location')
             ? doc.data()['contact location']
             : null;
 
@@ -50,10 +55,11 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
           contactTraces.add(currUsername);
           contactTimes.add(currTime);
           contactLocations.add(currLocation);
+          contactInfected.add(currInfected);
         }
       }
       setState(() {});
-      print(loggedInUser.email);
+      // print(loggedInUser.email);
     });
   }
 
@@ -87,21 +93,35 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
     try {
       bool a = await Nearby().startDiscovery(loggedInUser.email, strategy,
           onEndpointFound: (id, name, serviceId) async {
-        print('I saw id:$id with name:$name'); // the name here is an email
+        print('FOUND id:$id -> name:$name'); // the name here is an email
+
+        currentLocation = await location.getLocation();
+        // (LatLng(currentLocation.latitude, currentLocation.longitude))
+        GeoPoint point = new GeoPoint(currentLocation.latitude.toDouble(),
+            currentLocation.longitude.toDouble());
 
         var docRef = _firestore.collection('users').doc(loggedInUser.email);
-        print(docRef);
-        //  When I discover someone I will see their email and add that email to the database of my contacts
-        //  also get the current time & location and add it to the database
+
         docRef.collection('met_with').doc(name).set({
           'username': await getUsernameOfEmail(email: name),
           'contact time': DateTime.now(),
-          // 'contact location': (await location.getLocation()).toString(),
+          'contact location': point,
+          'infected': await getUserInfected(email: name)
         });
       }, onEndpointLost: (id) {
         print(id);
       });
       print('DISCOVERING: ${a.toString()}');
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void stopDiscovery() async {
+    try {
+      await Nearby().stopDiscovery();
+
+      print('STOP DISCOVERING}');
     } catch (e) {
       print(e);
     }
@@ -116,6 +136,39 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
     await _firestore.collection('users').doc(email).get().then((doc) {
       if (doc.exists) {
         res = doc.data()['username'];
+      } else {
+        // doc.data() will be undefined in this case
+        print("No such document!");
+      }
+    });
+    return res;
+  }
+
+  Future<String> getUserInfected({String email}) async {
+    String res = '';
+    await _firestore.collection('users').doc(email).get().then((doc) {
+      if (doc.exists) {
+        res = doc.data()['infected'];
+      } else {
+        // doc.data() will be undefined in this case
+        print("No such document!");
+      }
+    });
+    return res;
+  }
+
+  Future<bool> getDataUserInfected() async {
+    bool res = false;
+    await getCurrentUser();
+
+    await _firestore
+        .collection('users')
+        .doc(loggedInUser.email)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        res = doc.data()['infected'];
+        // setState(() => infected = doc.data()['infected']);
       } else {
         // doc.data() will be undefined in this case
         print("No such document!");
@@ -139,7 +192,6 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
   void initState() {
     super.initState();
     Firebase.initializeApp().whenComplete(() {
-      print("completed");
       setState(() {
         deleteOldContacts(14);
         addContactsToList();
@@ -153,198 +205,137 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
     super.dispose();
   }
 
+  bool isSwitch = false;
+  bool dynamicSwitch;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        physics: ScrollPhysics(),
-        child: Column(
-          children: <Widget>[
-            MyHeader(
-              image: "assets/icons/coronadr.svg",
-              textTop: "COVID-19",
-              textBottom: "contact tracing.",
-              offset: offset,
-            ),
-            Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+    handleSwitch(bool value) {
+      _firestore
+          .collection('users')
+          .doc(loggedInUser.email)
+          .update({"infected": value}).then((_) {
+        print("success!");
+      });
+      setState(() {
+        isSwitch = value;
+        dynamicSwitch = value;
+      });
+    }
+
+    return FutureBuilder(
+        future: getDataUserInfected(),
+        builder: (context, AsyncSnapshot<bool> snapshot) {
+          if (!snapshot.hasData)
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+
+          dynamicSwitch = snapshot.data;
+          print(snapshot.data);
+          return Scaffold(
+            body: SingleChildScrollView(
+              physics: ScrollPhysics(),
+              child: Column(
                 children: <Widget>[
-                  SizedBox(height: 20),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 30.0),
-                    child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      elevation: 5.0,
-                      color: Colors.deepPurple[400],
-                      onPressed: () async {
-                        try {
-                          bool a = await Nearby().startAdvertising(
-                            loggedInUser.email,
-                            strategy,
-                            onConnectionInitiated: null,
-                            onConnectionResult: (id, status) {
-                              print(status);
-                            },
-                            onDisconnected: (id) {
-                              print('Disconnected $id');
-                            },
-                          );
-
-                          print('ADVERTISING ${a.toString()}');
-                        } catch (e) {
-                          print(e);
-                        }
-
-                        discovery();
-                      },
-                      child: Text(
-                        'Start Tracing',
-                        style: kButtonTextStyle,
-                      ),
-                    ),
+                  MyHeader(
+                    image: "assets/icons/coronadr.svg",
+                    textTop: "COVID-19",
+                    textBottom: "contact tracing.",
+                    offset: offset,
                   ),
-                ]),
-            ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return ContactCard(
-                  imagePath: 'assets/images/wear_mask.png',
-                  email: contactTraces[index],
-                  infection: 'Not-Infected',
-                  contactUsername: contactTraces[index],
-                  contactTime: contactTimes[index],
-                  contactLocation: contactLocations[index],
-                );
-              },
-              itemCount: contactTraces.length,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text("I'm infected"),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 30.0),
+                          child: Switch(
+                            value: dynamicSwitch != true
+                                ? isSwitch
+                                : dynamicSwitch,
+                            onChanged: (val) {
+                              handleSwitch(val);
+                            },
+                            activeTrackColor: kPrimaryColor,
+                            activeColor: Colors.white,
+                            inactiveTrackColor: Colors.grey,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 30.0),
+                          child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0)),
+                            elevation: 5.0,
+                            color: kPrimaryColor,
+                            onPressed: () async {
+                              try {
+                                await Nearby().stopAdvertising();
+                                stopDiscovery();
+                                bool a = await Nearby().startAdvertising(
+                                  loggedInUser.email,
+                                  strategy,
+                                  onConnectionInitiated: null,
+                                  onConnectionResult: (id, status) {
+                                    print(status);
+                                  },
+                                  onDisconnected: (id) {
+                                    print('Disconnected $id');
+                                  },
+                                );
 
-class PreventCard extends StatelessWidget {
-  final String image;
-  final String title;
-  final String text;
-  const PreventCard({
-    Key key,
-    this.image,
-    this.title,
-    this.text,
-  }) : super(key: key);
+                                print('ADVERTISING ${a.toString()}');
+                              } catch (e) {
+                                print(e);
+                              }
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: SizedBox(
-        height: 156,
-        child: Stack(
-          alignment: Alignment.centerLeft,
-          children: <Widget>[
-            Container(
-              height: 136,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    offset: Offset(0, 8),
-                    blurRadius: 24,
-                    color: kShadowColor,
+                              discovery();
+                            },
+                            child: Text(
+                              'Start Tracing',
+                              style: kButtonTextStyle,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 30.0),
+                          child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0)),
+                            elevation: 5.0,
+                            color: kDeathColor,
+                            onPressed: () async {
+                              stopDiscovery();
+                            },
+                            child: Text(
+                              'Stop Tracing',
+                              style: kButtonTextStyle,
+                            ),
+                          ),
+                        ),
+                      ]),
+                  ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return ContactCard(
+                        imagePath: 'assets/images/wear_mask.png',
+                        email: contactTraces[index],
+                        infected: contactInfected[index],
+                        contactUsername: contactTraces[index],
+                        contactTime: contactTimes[index],
+                        contactLocation: LatLng(
+                            contactLocations[index].latitude.toDouble(),
+                            contactLocations[index].longitude.toDouble()),
+                      );
+                    },
+                    itemCount: contactTraces.length,
                   ),
                 ],
               ),
             ),
-            Image.asset(image),
-            Positioned(
-              left: 130,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                height: 136,
-                width: MediaQuery.of(context).size.width - 170,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      title,
-                      style: kTitleTextstyle.copyWith(
-                        fontSize: 16,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        text,
-                        maxLines: 4,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    // Align(
-                    //   alignment: Alignment.topRight,
-                    //   child: SvgPicture.asset("assets/icons/forward.svg"),
-                    // ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SymptomCard extends StatelessWidget {
-  final String image;
-  final String title;
-  final bool isActive;
-  const SymptomCard({
-    Key key,
-    this.image,
-    this.title,
-    this.isActive = false,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: Colors.white,
-        boxShadow: [
-          isActive
-              ? BoxShadow(
-                  offset: Offset(0, 10),
-                  blurRadius: 20,
-                  color: kActiveShadowColor,
-                )
-              : BoxShadow(
-                  offset: Offset(0, 3),
-                  blurRadius: 6,
-                  color: kShadowColor,
-                ),
-        ],
-      ),
-      child: Column(
-        children: <Widget>[
-          Image.asset(image, height: 90),
-          Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
+          );
+        });
   }
 }

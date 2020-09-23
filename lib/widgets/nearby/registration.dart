@@ -98,6 +98,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       if (newUser != null) {
                         _firestore.collection('users').doc(email).set({
                           'username': userName,
+                          'infected': false,
                         });
                         Navigator.push(
                             context,
