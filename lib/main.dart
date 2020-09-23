@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
           WelcomeScreen.id: (context) => WelcomeScreen(),
           RegistrationScreen.id: (context) => RegistrationScreen(),
           LoginScreen.id: (context) => LoginScreen(),
-          NearbyInterface.id: (context) => NearbyInterface(),
+          // NearbyInterface.id: (context) => NearbyInterface(),
         },
       ),
     );

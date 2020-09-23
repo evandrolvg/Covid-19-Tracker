@@ -1,21 +1,23 @@
+import 'package:covid_19/helper/constant.dart';
+import 'package:covid_19/views/info/my_header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:covid_19/widgets/nearby/components/contact_card.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:nearby_connections/nearby_connections.dart';
-
-import 'components/contact_card.dart';
-import 'constants.dart';
+import 'package:covid_19/helper/constant.dart';
 
 class NearbyInterface extends StatefulWidget {
-  static const String id = 'nearby_interface';
+  // static const String id = 'nearby_interface';
 
   @override
   _NearbyInterfaceState createState() => _NearbyInterfaceState();
 }
 
 class _NearbyInterfaceState extends State<NearbyInterface> {
+  double offset = 0;
   Location location = Location();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Strategy strategy = Strategy.P2P_STAR;
@@ -147,133 +149,202 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Icon(
-          Icons.menu,
-          color: Colors.deepPurple[800],
+      body: SingleChildScrollView(
+        physics: ScrollPhysics(),
+        child: Column(
+          children: <Widget>[
+            MyHeader(
+              image: "assets/icons/coronadr.svg",
+              textTop: "COVID-19",
+              textBottom: "contact tracing.",
+              offset: offset,
+            ),
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 30.0),
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                      elevation: 5.0,
+                      color: Colors.deepPurple[400],
+                      onPressed: () async {
+                        try {
+                          bool a = await Nearby().startAdvertising(
+                            loggedInUser.email,
+                            strategy,
+                            onConnectionInitiated: null,
+                            onConnectionResult: (id, status) {
+                              print(status);
+                            },
+                            onDisconnected: (id) {
+                              print('Disconnected $id');
+                            },
+                          );
+
+                          print('ADVERTISING ${a.toString()}');
+                        } catch (e) {
+                          print(e);
+                        }
+
+                        discovery();
+                      },
+                      child: Text(
+                        'Start Tracing',
+                        style: kButtonTextStyle,
+                      ),
+                    ),
+                  ),
+                ]),
+            ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ContactCard(
+                  imagePath: 'assets/images/wear_mask.png',
+                  email: contactTraces[index],
+                  infection: 'Not-Infected',
+                  contactUsername: contactTraces[index],
+                  contactTime: contactTimes[index],
+                  contactLocation: contactLocations[index],
+                );
+              },
+              itemCount: contactTraces.length,
+            ),
+          ],
         ),
-        centerTitle: true,
-        title: Text(
-          'TracerX',
-          style: TextStyle(
-            color: Colors.deepPurple[800],
-            fontWeight: FontWeight.bold,
-            fontSize: 28.0,
-          ),
-        ),
-        backgroundColor: Colors.white,
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: 25.0,
-                right: 25.0,
-                bottom: 10.0,
-                top: 30.0,
+    );
+  }
+}
+
+class PreventCard extends StatelessWidget {
+  final String image;
+  final String title;
+  final String text;
+  const PreventCard({
+    Key key,
+    this.image,
+    this.title,
+    this.text,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: SizedBox(
+        height: 156,
+        child: Stack(
+          alignment: Alignment.centerLeft,
+          children: <Widget>[
+            Container(
+              height: 136,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 8),
+                    blurRadius: 24,
+                    color: kShadowColor,
+                  ),
+                ],
               ),
+            ),
+            Image.asset(image),
+            Positioned(
+              left: 130,
               child: Container(
-                height: 100.0,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.deepPurple[500],
-                  borderRadius: BorderRadius.circular(20.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      blurRadius: 4.0,
-                      spreadRadius: 0.0,
-                      offset:
-                          Offset(2.0, 2.0), // shadow direction: bottom right
-                    )
-                  ],
-                ),
-                child: Row(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                height: 136,
+                width: MediaQuery.of(context).size.width - 170,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Expanded(
-                      child: Image(
-                        image: AssetImage('assets/images/covid.jpg'),
+                    Text(
+                      title,
+                      style: kTitleTextstyle.copyWith(
+                        fontSize: 16,
                       ),
                     ),
                     Expanded(
-                      flex: 2,
                       child: Text(
-                        'Your Contact Traces',
-                        textAlign: TextAlign.left,
+                        text,
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 21.0,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
                         ),
                       ),
-                    )
+                    ),
+                    // Align(
+                    //   alignment: Alignment.topRight,
+                    //   child: SvgPicture.asset("assets/icons/forward.svg"),
+                    // ),
                   ],
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 30.0),
-            child: RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0)),
-              elevation: 5.0,
-              color: Colors.deepPurple[400],
-              onPressed: () async {
-                try {
-                  bool a = await Nearby().startAdvertising(
-                    loggedInUser.email,
-                    strategy,
-                    onConnectionInitiated: null,
-                    onConnectionResult: (id, status) {
-                      print(status);
-                    },
-                    onDisconnected: (id) {
-                      print('Disconnected $id');
-                    },
-                  );
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-                  print('ADVERTISING ${a.toString()}');
-                } catch (e) {
-                  print(e);
-                }
+class SymptomCard extends StatelessWidget {
+  final String image;
+  final String title;
+  final bool isActive;
+  const SymptomCard({
+    Key key,
+    this.image,
+    this.title,
+    this.isActive = false,
+  }) : super(key: key);
 
-                discovery();
-              },
-              child: Text(
-                'Start Tracing',
-                style: kButtonTextStyle,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25.0),
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  return ContactCard(
-                    imagePath: 'assets/images/wear_mask.png',
-                    email: contactTraces[index],
-                    infection: 'Not-Infected',
-                    contactUsername: contactTraces[index],
-                    contactTime: contactTimes[index],
-                    contactLocation: contactLocations[index],
-                  );
-                },
-                itemCount: contactTraces.length,
-              ),
-            ),
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: Colors.white,
+        boxShadow: [
+          isActive
+              ? BoxShadow(
+                  offset: Offset(0, 10),
+                  blurRadius: 20,
+                  color: kActiveShadowColor,
+                )
+              : BoxShadow(
+                  offset: Offset(0, 3),
+                  blurRadius: 6,
+                  color: kShadowColor,
+                ),
+        ],
+      ),
+      child: Column(
+        children: <Widget>[
+          Image.asset(image, height: 90),
+          Text(
+            title,
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ],
       ),
     );
   }
 }
-
-// TODO: Take mobile number instead of email
-
-// TODO: Delete contacts older than 14 days from database
