@@ -3,6 +3,7 @@ import 'package:covid_19/helper/constant.dart';
 import 'package:covid_19/widgets/nearby/nearby_interface.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -140,11 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (email != null && password != null) {
                         final user = await signIn(email, password);
                         if (user != null) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => NearbyInterface()));
-                          // Navigator.pushNamed(context, NearbyInterface);
+                          Phoenix.rebirth(context);
                         }
 
                         setState(() {

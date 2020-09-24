@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:covid_19/widgets/list_country.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:covid_19/helper/constant.dart';
 import 'package:covid_19/widgets/nearby/login.dart';
 import 'package:covid_19/widgets/nearby/registration.dart';
@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:covid_19/helper/api_covid.dart';
 import 'package:covid_19/Provider/country.dart';
 import 'package:covid_19/home_page.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,7 +19,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
-    MyApp(),
+    Phoenix(
+      child: MyApp(),
+    ),
   );
 }
 
@@ -29,7 +33,6 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AllData()),
         ChangeNotifierProvider(create: (_) => SCountry()),
-        // ChangeNotifierProvider(create: (_) => NewsArticleListViewModel())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -48,22 +51,13 @@ class MyApp extends StatelessWidget {
         },
       ),
     );
-
-    // return MaterialApp(
-    //   debugShowCheckedModeBanner: false,
-    //   title: 'Covid 19',
-    //   theme: ThemeData(
-    //       scaffoldBackgroundColor: kBackgroundColor,
-    //       fontFamily: "Poppins",
-    //       textTheme: TextTheme(
-    //         body1: TextStyle(color: kBodyTextColor),
-    //       )),
-    //   home: HomeScreen(),
-    // );
   }
 }
 
 class HomeScreen extends StatelessWidget {
+  final _auth = auth.FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = new GoogleSignIn();
+
   @override
   Widget build(BuildContext context) {
     // Provider.of<dynamic>(context, listen: false);
@@ -73,28 +67,51 @@ class HomeScreen extends StatelessWidget {
     Timer(Duration(seconds: 3), () async {
       SharedPreferences pref = await SharedPreferences.getInstance();
 
-      if (pref == null || pref.getString('country') == null) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => ListCountry()));
-        liveCountry.retriveAll();
-      } else {
+      // if (pref == null || pref.getString('country') == null) {
+      //   Navigator.push(
+      //       context, MaterialPageRoute(builder: (context) => ListCountry()));
+      //   liveCountry.retriveAll();
+      // } else {
+      if (pref != null || pref.getString('country') != null) {
         country.setCountryName(pref.getString('country'));
         liveCountry.retrieveOne(country.countryName);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
-        liveCountry.retriveAll();
       }
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomePage()));
+      liveCountry.retriveAll();
+      // }
     });
+
+    bool _checkLogin() {
+      GoogleSignInAccount user = _googleSignIn.currentUser;
+      return !(user == null && _auth.currentUser == null);
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
-          margin: EdgeInsets.all(0.0),
-          height: double.infinity,
-          width: double.infinity,
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: ExactAssetImage('assets/images/covid.jpg'),
-                  fit: BoxFit.fill))),
+        margin: EdgeInsets.all(0.0),
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: ExactAssetImage('assets/images/covid.jpg'),
+                fit: BoxFit.fill)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          verticalDirection: VerticalDirection.up,
+          children: [
+            Text(
+              _checkLogin() ? 'Welcome ' + _auth.currentUser.email : '',
+              style: TextStyle(
+                  fontSize: 20,
+                  backgroundColor: kTitleTextColor.withOpacity(.6),
+                  color: kBackgroundColor),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

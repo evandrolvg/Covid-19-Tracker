@@ -1,3 +1,5 @@
+import 'package:covid_19/home_page.dart';
+import 'package:covid_19/widgets/nearby/nearby_interface.dart';
 import 'package:covid_19/widgets/nearby/components/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
@@ -32,7 +34,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             title: 'Log In',
             colour: Colors.deepPurple[400],
             onPressed: () {
-              Navigator.pushNamed(context, LoginScreen.id);
+              // Navigator.pushNamed(context, LoginScreen.id);
+
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => LoginScreen()));
             },
           ),
           RoundedButton(

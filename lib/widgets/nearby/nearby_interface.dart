@@ -5,6 +5,7 @@ import 'package:covid_19/widgets/nearby/components/contact_card.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:nearby_connections/nearby_connections.dart';
@@ -189,6 +190,21 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
     }
   }
 
+  Future<void> _signOut() async {
+    try {
+      await _auth.signOut();
+      loggedInUser = _auth.currentUser;
+      // Navigator.pushNamed(context, WelcomeScreen.id);
+      // setState(() {
+      //   HomePage
+      // });
+      // main();
+      Phoenix.rebirth(context);
+    } catch (e) {
+      print(e); // TODO: show dialog with error
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -245,11 +261,25 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
                     offset: offset,
                   ),
                   Column(
+                    children: <Widget>[
+                      FlatButton(
+                        child: Text(
+                          'Logout',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: kPrimaryColor,
+                          ),
+                        ),
+                        onPressed: _signOut,
+                      ),
+                    ],
+                  ),
+                  Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Text("I'm infected"),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 30.0),
+                          padding: EdgeInsets.only(bottom: 10.0),
                           child: Switch(
                             value: dynamicSwitch != true
                                 ? isSwitch
@@ -262,9 +292,9 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
                             inactiveTrackColor: Colors.grey,
                           ),
                         ),
-                        SizedBox(height: 20),
+                        // SizedBox(height: 20),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 30.0),
+                          padding: EdgeInsets.only(bottom: 10.0),
                           child: RaisedButton(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20.0)),
@@ -299,7 +329,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 30.0),
+                          padding: EdgeInsets.only(bottom: 10.0),
                           child: RaisedButton(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20.0)),
@@ -315,6 +345,24 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
                           ),
                         ),
                       ]),
+                  // SizedBox(height: 10),
+                  // Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: 20),
+                  //   child: Row(
+                  //     children: <Widget>[
+                  //       RichText(
+                  //         text: TextSpan(
+                  //           children: [
+                  //             TextSpan(
+                  //               text: "My contacts\n",
+                  //               style: kTitleTextstyle,
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,

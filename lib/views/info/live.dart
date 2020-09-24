@@ -110,7 +110,7 @@ class _LivePageState extends State<LivePage> {
                           children: <Widget>[
                             SvgPicture.asset("assets/icons/maps-and-flags.svg"),
                             Text(
-                              'Select another country',
+                              'Select country',
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
@@ -125,15 +125,15 @@ class _LivePageState extends State<LivePage> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Column(children: <Widget>[
-                      // CircularProgressIndicator(),
-                      Text(
-                        "Country not found or doesn't have any cases",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: kCriticalColor,
-                        ),
-                      ),
+                      CircularProgressIndicator(),
+                      // Text(
+                      //   "Country not found or doesn't have any cases",
+                      //   style: TextStyle(
+                      //     fontSize: 15,
+                      //     fontWeight: FontWeight.w700,
+                      //     color: kCriticalColor,
+                      //   ),
+                      // ),
                     ]),
                   ),
                 ],
