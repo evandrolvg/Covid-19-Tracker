@@ -1,9 +1,5 @@
 import 'package:covid_19/widgets/nearby/components/rounded_button.dart';
 import 'package:flutter/material.dart';
-import 'package:covid_19/widgets/nearby/nearby_interface.dart';
-
-import 'package:google_sign_in/google_sign_in.dart';
-
 import 'login.dart';
 import 'registration.dart';
 

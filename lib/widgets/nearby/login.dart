@@ -3,7 +3,6 @@ import 'package:covid_19/helper/constant.dart';
 import 'package:covid_19/widgets/nearby/nearby_interface.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -16,7 +15,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool showSpinner = false;
   final _auth = auth.FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = new GoogleSignIn();
   String email;
   String password;
 

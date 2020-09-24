@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:nearby_connections/nearby_connections.dart';
-import 'package:covid_19/helper/constant.dart';
 
 class NearbyInterface extends StatefulWidget {
   // static const String id = 'nearby_interface';
@@ -90,9 +89,11 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
   }
 
   void discovery() async {
+    showToast('Discovery active');
     try {
       bool a = await Nearby().startDiscovery(loggedInUser.email, strategy,
           onEndpointFound: (id, name, serviceId) async {
+        showToast('Found: $name');
         print('FOUND id:$id -> name:$name'); // the name here is an email
 
         currentLocation = await location.getLocation();
@@ -120,8 +121,8 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
   void stopDiscovery() async {
     try {
       await Nearby().stopDiscovery();
-
-      print('STOP DISCOVERING}');
+      showToast('Stop discovering');
+      // print('STOP DISCOVERING');
     } catch (e) {
       print(e);
     }
@@ -214,7 +215,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
           .collection('users')
           .doc(loggedInUser.email)
           .update({"infected": value}).then((_) {
-        print("success!");
+        showToast('Status changed');
       });
       setState(() {
         isSwitch = value;
@@ -231,7 +232,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
             );
 
           dynamicSwitch = snapshot.data;
-          print(snapshot.data);
+
           return Scaffold(
             body: SingleChildScrollView(
               physics: ScrollPhysics(),
@@ -271,13 +272,12 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
                             color: kPrimaryColor,
                             onPressed: () async {
                               try {
-                                await Nearby().stopAdvertising();
-                                stopDiscovery();
                                 bool a = await Nearby().startAdvertising(
                                   loggedInUser.email,
                                   strategy,
                                   onConnectionInitiated: null,
                                   onConnectionResult: (id, status) {
+                                    print('STATUS');
                                     print(status);
                                   },
                                   onDisconnected: (id) {

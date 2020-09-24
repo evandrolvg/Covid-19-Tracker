@@ -1,7 +1,8 @@
+import 'package:covid_19/widgets/nearby/maps_contact.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import 'bottom_sheet_text.dart';
+import 'package:covid_19/helper/constant.dart';
 
 class ContactCard extends StatelessWidget {
   ContactCard(
@@ -22,6 +23,7 @@ class ContactCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: infected ? kInfectedNBColor : kBackgroundColor,
       elevation: 3.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       child: ListTile(
@@ -32,31 +34,100 @@ class ContactCard extends StatelessWidget {
         title: Text(
           email,
           style: TextStyle(
-            color: Colors.deepPurple[700],
+            color: kPrimaryColor,
             fontWeight: FontWeight.bold,
           ),
         ),
-        subtitle: Text(infected ? 'Yes' : 'No'),
+        subtitle: Text(
+          infected ? 'Infected' : 'Not infected',
+          style: TextStyle(
+            color: infected ? kDeathColor : kPrimaryColor,
+          ),
+        ),
         onTap: () => showModalBottomSheet(
             context: context,
             builder: (builder) {
-              return Padding(
-                padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
-                child: Column(
-                  children: <Widget>[
-                    BottomSheetText(
-                        question: 'Username', result: contactUsername),
-                    SizedBox(height: 5.0),
-                    BottomSheetText(
-                        question: 'Contact Time',
-                        result: contactTime.toString()),
-                    SizedBox(height: 5.0),
-                    BottomSheetText(
-                        question: 'Contact Location',
-                        result: contactLocation.toString()),
-                    SizedBox(height: 5.0),
-                    // BottomSheetText(question: 'Times Contacted', result: '3'),
-                  ],
+              return Container(
+                color:
+                    Color(0xFF737373), //could change this to Color(0xFF737373),
+                //so you don't have to change MaterialApp canvasColor
+                child: new Container(
+                  decoration: new BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: new BorderRadius.only(
+                          topLeft: const Radius.circular(20.0),
+                          topRight: const Radius.circular(20.0))),
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        CircleAvatar(
+                          backgroundImage: AssetImage(imagePath),
+                        ),
+                        Text(
+                          email,
+                          style: TextStyle(
+                            color: kTitleTextColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Spacer(),
+                        Text(
+                          infected ? 'INFECTED' : 'NOT INFECTED',
+                          style: kTitleTextstyle.copyWith(
+                            color: kTitleTextColor,
+                            fontSize: 10,
+                          ),
+                        ),
+                        Spacer(),
+                        Text(
+                          'CONTACT TIME',
+                          style: kTitleTextstyle.copyWith(
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          d
+                              .format(DateTime.parse(contactTime.toString()))
+                              .toString()
+                              .split('.')[0],
+                          style: kTitleTextstyle.copyWith(
+                            fontSize: 10,
+                          ),
+                        ),
+                        Spacer(),
+                        Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => GMap(
+                                        contactLocation: contactLocation)));
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            // textDirection: TextDirection.rtl,
+                            // verticalDirection: VerticalDirection.up,
+                            children: [
+                              SvgPicture.asset(
+                                  "assets/icons/maps-and-flags.svg",
+                                  height: 30),
+                              Text(
+                                'See on map',
+                                style: TextStyle(
+                                    color: kPrimaryColor, fontSize: 18.0),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               );
             }),

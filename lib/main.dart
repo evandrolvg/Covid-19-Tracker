@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:covid_19/widgets/list_country.dart';
 import 'package:covid_19/helper/constant.dart';
 import 'package:covid_19/widgets/nearby/login.dart';
-import 'package:covid_19/widgets/nearby/nearby_interface.dart';
 import 'package:covid_19/widgets/nearby/registration.dart';
 import 'package:covid_19/widgets/nearby/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
