@@ -110,6 +110,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         showSpinner = false;
                       });
                     } catch (e) {
+                      showToast(e.toString());
+                      setState(() {
+                        showSpinner = false;
+                      });
                       print(e);
                     }
                   },

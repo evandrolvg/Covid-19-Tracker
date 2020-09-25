@@ -10,12 +10,14 @@ class AllData with ChangeNotifier {
   retrieveOne(String countryName) async {
     // oneResponse.data = [];
     try {
-      // String _url = 'https://disease.sh/v2/countries/' + CountryName;
-      String _url = 'https://disease.sh/v3/covid-19/countries/' +
-          countryName +
-          '?strict=true&allowNull=false';
-      oneResponse = await dio.get(_url);
-      notifyListeners();
+      if (countryName != null) {
+        // String _url = 'https://disease.sh/v2/countries/' + CountryName;
+        String _url = 'https://disease.sh/v3/covid-19/countries/' +
+            countryName +
+            '?strict=true&allowNull=false';
+        oneResponse = await dio.get(_url);
+        notifyListeners();
+      }
     } on DioError catch (e) {
       if (e.response.statusCode == 404) {
         // oneResponse.data['country'] = json.encode('Not found');

@@ -1,5 +1,4 @@
-import 'package:covid_19/home_page.dart';
-import 'package:covid_19/widgets/nearby/nearby_interface.dart';
+import 'package:covid_19/helper/constant.dart';
 import 'package:covid_19/widgets/nearby/components/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
@@ -18,7 +17,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/images/covid.jpg'),
+          image: AssetImage('assets/images/covidBack.jpg'),
           fit: BoxFit.cover,
         ),
       ),
@@ -32,7 +31,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ),
           RoundedButton(
             title: 'Log In',
-            colour: Colors.deepPurple[400],
+            colour: kPrimaryColor,
             onPressed: () {
               // Navigator.pushNamed(context, LoginScreen.id);
 
@@ -44,7 +43,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ),
           RoundedButton(
             title: 'Register',
-            colour: Colors.deepPurpleAccent,
+            colour: kSecondaryColor,
             onPressed: () {
               Navigator.pushNamed(context, RegistrationScreen.id);
             },

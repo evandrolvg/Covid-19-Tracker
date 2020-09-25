@@ -1,6 +1,5 @@
 import 'package:covid_19/widgets/nearby/components/rounded_button.dart';
 import 'package:covid_19/helper/constant.dart';
-import 'package:covid_19/widgets/nearby/nearby_interface.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -30,17 +29,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<String> signIn(String email, String password) async {
     auth.User user;
     String errorMessage;
-
-    // if (email == null && password == null) {
-    //   Fluttertoast.showToast(
-    //       msg: 'sadsad',
-    //       toastLength: Toast.LENGTH_SHORT,
-    //       gravity: ToastGravity.CENTER,
-    //       timeInSecForIosWeb: 1,
-    //       backgroundColor: Colors.red,
-    //       textColor: Colors.white,
-    //       fontSize: 16.0);
-    // }
 
     try {
       final result = await _auth.signInWithEmailAndPassword(
@@ -91,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/covid.jpg'),
+            image: AssetImage('assets/images/covidBack.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -131,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 RoundedButton(
                   title: 'Log In',
-                  colour: Colors.deepPurpleAccent,
+                  colour: kPrimaryColor,
                   onPressed: () async {
                     setState(() {
                       showSpinner = true;

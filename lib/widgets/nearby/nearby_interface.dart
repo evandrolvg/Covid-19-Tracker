@@ -92,6 +92,16 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
   void discovery() async {
     showToast('Discovery active');
     try {
+      try {
+        await Nearby().stopDiscovery();
+      } catch (e) {
+        print(e);
+      }
+      try {
+        await Nearby().stopAdvertising();
+      } catch (e) {
+        print(e);
+      }
       bool a = await Nearby().startDiscovery(loggedInUser.email, strategy,
           onEndpointFound: (id, name, serviceId) async {
         showToast('Found: $name');
@@ -111,6 +121,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
           'infected': await getUserInfected(email: name)
         });
       }, onEndpointLost: (id) {
+        print('onEndpointLost');
         print(id);
       });
       print('DISCOVERING: ${a.toString()}');
@@ -129,8 +140,36 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
     }
   }
 
-  void getPermissions() {
+  void stopAdvertising() async {
+    try {
+      await Nearby().stopAdvertising();
+      showToast('Stop advertising');
+      // print('STOP DISCOVERING');
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> getPermissions() async {
     Nearby().askLocationAndExternalStoragePermission();
+    // returns true/false asynchronously
+    await Nearby().checkLocationPermission();
+// asks for permission only if its not given
+// returns true/false if the location permission is granted on/off resp.
+    Nearby().askLocationPermission();
+
+// OPTIONAL: if you need to transfer files and rename it on device
+    Nearby().checkExternalStoragePermission();
+// asks for READ + WRTIE EXTERNAL STORAGE permission only if its not given
+    Nearby().askExternalStoragePermission();
+
+    Nearby().askLocationAndExternalStoragePermission();
+
+    await Nearby().checkLocationEnabled();
+
+// opens dialogue to enable location service
+// returns true/false if the location service is turned on/off resp.
+    await Nearby().enableLocationServices();
   }
 
   Future<String> getUsernameOfEmail({String email}) async {
@@ -146,8 +185,8 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
     return res;
   }
 
-  Future<String> getUserInfected({String email}) async {
-    String res = '';
+  Future<bool> getUserInfected({String email}) async {
+    bool res = false;
     await _firestore.collection('users').doc(email).get().then((doc) {
       if (doc.exists) {
         res = doc.data()['infected'];
@@ -172,7 +211,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
         res = doc.data()['infected'];
         // setState(() => infected = doc.data()['infected']);
       } else {
-        // doc.data() will be undefined in this case
+        res = false;
         print("No such document!");
       }
     });
@@ -201,7 +240,8 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
       // main();
       Phoenix.rebirth(context);
     } catch (e) {
-      print(e); // TODO: show dialog with error
+      showToast(e.toString());
+      print(e);
     }
   }
 
@@ -255,25 +295,29 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
               child: Column(
                 children: <Widget>[
                   MyHeader(
-                    image: "assets/icons/coronadr.svg",
+                    image: "assets/icons/smartphone.svg",
+                    width: 130,
+                    height: 300,
                     textTop: "COVID-19",
                     textBottom: "contact tracing.",
                     offset: offset,
                   ),
-                  Column(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    verticalDirection: VerticalDirection.up,
                     children: <Widget>[
                       FlatButton(
-                        child: Text(
-                          'Logout',
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            color: kPrimaryColor,
-                          ),
+                        child: Icon(
+                          Icons.exit_to_app,
+                          color: Colors.red[600],
+                          size: 24.0,
                         ),
                         onPressed: _signOut,
                       ),
                     ],
                   ),
+
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
@@ -303,17 +347,16 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
                             onPressed: () async {
                               try {
                                 bool a = await Nearby().startAdvertising(
-                                  loggedInUser.email,
-                                  strategy,
-                                  onConnectionInitiated: null,
-                                  onConnectionResult: (id, status) {
-                                    print('STATUS');
-                                    print(status);
-                                  },
-                                  onDisconnected: (id) {
-                                    print('Disconnected $id');
-                                  },
-                                );
+                                    loggedInUser.email, strategy,
+                                    onConnectionInitiated:
+                                        (String id, ConnectionInfo info) {
+                                  print(info.toString());
+                                }, onConnectionResult: (id, status) {
+                                  print('STATUS');
+                                  print(status);
+                                }, onDisconnected: (id) {
+                                  print('Disconnected $id');
+                                }, serviceId: 'com.example.covid_19');
 
                                 print('ADVERTISING ${a.toString()}');
                               } catch (e) {
@@ -337,6 +380,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
                             color: kDeathColor,
                             onPressed: () async {
                               stopDiscovery();
+                              stopAdvertising();
                             },
                             child: Text(
                               'Stop Tracing',

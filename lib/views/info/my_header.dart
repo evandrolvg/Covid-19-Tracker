@@ -4,11 +4,19 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class MyHeader extends StatefulWidget {
   final String image;
+  final double width;
+  final double height;
   final String textTop;
   final String textBottom;
   final double offset;
   const MyHeader(
-      {Key key, this.image, this.textTop, this.textBottom, this.offset})
+      {Key key,
+      this.image,
+      this.width,
+      this.height,
+      this.textTop,
+      this.textBottom,
+      this.offset})
       : super(key: key);
 
   @override
@@ -22,7 +30,7 @@ class _MyHeaderState extends State<MyHeader> {
       clipper: MyClipper(),
       child: Container(
         padding: EdgeInsets.only(left: 40, top: 50, right: 20),
-        height: 350,
+        height: widget.height != null ? widget.height : 350,
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -61,7 +69,7 @@ class _MyHeaderState extends State<MyHeader> {
                     top: (widget.offset < 0) ? 0 : widget.offset,
                     child: SvgPicture.asset(
                       widget.image,
-                      width: 230,
+                      width: widget.width != null ? widget.width : 230,
                       fit: BoxFit.fitWidth,
                       alignment: Alignment.topCenter,
                     ),

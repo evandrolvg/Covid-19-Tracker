@@ -105,8 +105,8 @@ class HomeScreen extends StatelessWidget {
             Text(
               _checkLogin() ? 'Welcome ' + _auth.currentUser.email : '',
               style: TextStyle(
-                  fontSize: 20,
-                  backgroundColor: kTitleTextColor.withOpacity(.6),
+                  fontSize: 15,
+                  backgroundColor: kTitleTextColor.withOpacity(.8),
                   color: kBackgroundColor),
             ),
           ],
