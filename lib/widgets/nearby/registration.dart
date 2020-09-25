@@ -22,12 +22,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController userTxtController = TextEditingController()
-      ..text = 'teste';
-    TextEditingController emailTxtController = TextEditingController()
-      ..text = 'teste@teste.com.br';
-    TextEditingController passTxtController = TextEditingController()
-      ..text = 'testeteste';
+    // TextEditingController userTxtController = TextEditingController()
+    //   ..text = 'teste';
+    // TextEditingController emailTxtController = TextEditingController()
+    //   ..text = 'teste@teste.com.br';
+    // TextEditingController passTxtController = TextEditingController()
+    //   ..text = 'testeteste';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -47,7 +47,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 TextField(
-                  controller: userTxtController,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
                     userName = value;
@@ -59,7 +58,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   height: 8.0,
                 ),
                 TextField(
-                  controller: emailTxtController,
                   keyboardType: TextInputType.emailAddress,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
@@ -72,7 +70,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   height: 8.0,
                 ),
                 TextField(
-                  controller: passTxtController,
                   obscureText: true,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
@@ -86,7 +83,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 RoundedButton(
                   title: 'Register',
-                  colour: Colors.deepPurpleAccent,
+                  colour: kPrimaryColor,
                   onPressed: () async {
                     setState(() {
                       showSpinner = true;

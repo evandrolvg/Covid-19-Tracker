@@ -34,6 +34,9 @@ class _LoginScreenState extends State<LoginScreen> {
       final result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       user = result.user;
+      if (user != null) {
+        Phoenix.rebirth(context);
+      }
     } catch (error) {
       switch (error.code) {
         case "ERROR_INVALID_EMAIL":
@@ -69,11 +72,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController emailTxtController = TextEditingController()
-      ..text = 'teste@teste.com.br';
+    // TextEditingController emailTxtController = TextEditingController()
+    //   ..text = 'teste@teste.com.br';
 
-    TextEditingController passTxtController = TextEditingController()
-      ..text = 'testeteste';
+    // TextEditingController passTxtController = TextEditingController()
+    //   ..text = 'testeteste';
 
     return Scaffold(
       body: Container(
@@ -92,7 +95,6 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 TextField(
-                  controller: emailTxtController,
                   keyboardType: TextInputType.emailAddress,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
@@ -105,7 +107,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 8.0,
                 ),
                 TextField(
-                  controller: passTxtController,
                   obscureText: true,
                   textAlign: TextAlign.center,
                   onChanged: (value) {
@@ -127,10 +128,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     try {
                       if (email != null && password != null) {
-                        final user = await signIn(email, password);
-                        if (user != null) {
-                          Phoenix.rebirth(context);
-                        }
+                        await signIn(email, password);
+                        // if (user != null) {
+                        //   Phoenix.rebirth(context);
+                        // }
 
                         setState(() {
                           showSpinner = false;

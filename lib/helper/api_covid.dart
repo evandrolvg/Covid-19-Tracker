@@ -19,7 +19,11 @@ class AllData with ChangeNotifier {
         notifyListeners();
       }
     } on DioError catch (e) {
-      if (e.response.statusCode == 404) {
+      if (e.response.statusCode == null) {
+        // oneResponse.data['country'] = json.encode('Not found');
+        oneResponse.data['code'] = null;
+        print(e.response.statusCode);
+      } else if (e.response.statusCode == 404) {
         // oneResponse.data['country'] = json.encode('Not found');
         oneResponse.data['code'] = e.response.statusCode;
         print(e.response.statusCode);

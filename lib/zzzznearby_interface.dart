@@ -33,7 +33,6 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
 
   void addContactsToList() async {
     await getCurrentUser();
-    int i = 0;
 
     _firestore
         .collection('users')
@@ -52,20 +51,12 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
             ? doc.data()['contact location']
             : null;
 
-        if (contactTraces.contains(currUsername)) {
-          int index = contactTraces
-              .indexWhere((contactTraces) => contactTraces == currUsername);
-          contactTraces[index] = currUsername;
-          contactTimes[index] = (currTime);
-          contactLocations[index] = (currLocation);
-          contactInfected[index] = (currInfected);
-        } else {
+        if (!contactTraces.contains(currUsername)) {
           contactTraces.add(currUsername);
           contactTimes.add(currTime);
           contactLocations.add(currLocation);
           contactInfected.add(currInfected);
         }
-        i++;
       }
       setState(() {});
       // print(loggedInUser.email);
@@ -98,8 +89,19 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
     setState(() {});
   }
 
-  void startDiscovery() async {
+  void discovery() async {
+    showToast('Discovery active');
     try {
+      try {
+        await Nearby().stopDiscovery();
+      } catch (e) {
+        print(e);
+      }
+      try {
+        await Nearby().stopAdvertising();
+      } catch (e) {
+        print(e);
+      }
       bool a = await Nearby().startDiscovery(loggedInUser.email, strategy,
           onEndpointFound: (id, name, serviceId) async {
         showToast('Found: $name');
@@ -119,12 +121,12 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
           'infected': await getUserInfected(email: name)
         });
       }, onEndpointLost: (id) {
-        print('ONENDPOINTLOST: $id');
+        print('onEndpointLost');
+        print(id);
       });
-      showToast('Discovery active');
       print('DISCOVERING: ${a.toString()}');
     } catch (e) {
-      print('ERROR STARTDISCOVERY: $e');
+      print(e);
     }
   }
 
@@ -158,32 +160,25 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
   }
 
   Future<void> getPermissions() async {
-    if (await Nearby().checkLocationPermission()) {
-      print("Location permissions OK");
-    } else {
-      if (await Nearby().askLocationPermission()) {
-        showToast("Location permission granted");
-      } else {
-        showToast("ERROR Location permissions not granted");
-      }
-    }
+    Nearby().askLocationAndExternalStoragePermission();
+    // returns true/false asynchronously
+    await Nearby().checkLocationPermission();
+// asks for permission only if its not given
+// returns true/false if the location permission is granted on/off resp.
+    Nearby().askLocationPermission();
 
-    if (await Nearby().checkExternalStoragePermission()) {
-      print("External Storage permissions granted OK");
-    } else {
-      // print("ERROR External Storage permissions granted");
-      Nearby().askExternalStoragePermission();
-    }
+// OPTIONAL: if you need to transfer files and rename it on device
+    Nearby().checkExternalStoragePermission();
+// asks for READ + WRTIE EXTERNAL STORAGE permission only if its not given
+    Nearby().askExternalStoragePermission();
 
-    if (await Nearby().checkLocationEnabled()) {
-      print("Location is OK");
-    } else {
-      if (await Nearby().enableLocationServices()) {
-        showToast("Location Service Enabled");
-      } else {
-        showToast("ERROR Enabling Location Service Failed");
-      }
-    }
+    Nearby().askLocationAndExternalStoragePermission();
+
+    await Nearby().checkLocationEnabled();
+
+// opens dialogue to enable location service
+// returns true/false if the location service is turned on/off resp.
+    await Nearby().enableLocationServices();
   }
 
   Future<String> getUsernameOfEmail({String email}) async {
@@ -267,7 +262,6 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
         deleteOldContacts(14);
         addContactsToList();
         getPermissions();
-        stopAllEndpoints();
       });
     });
   }
@@ -322,7 +316,6 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     verticalDirection: VerticalDirection.up,
                     children: <Widget>[
-                      Text(loggedInUser.email),
                       FlatButton(
                         child: Icon(
                           Icons.exit_to_app,
@@ -362,23 +355,26 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
                             color: kPrimaryColor,
                             onPressed: () async {
                               try {
+                                print(
+                                    'loggedInUser.email advert -> $loggedInUser.email');
                                 bool a = await Nearby().startAdvertising(
                                     loggedInUser.email, strategy,
                                     onConnectionInitiated:
                                         (String id, ConnectionInfo info) {
-                                  print('CONNECTION INITIATED: $info');
+                                  print(info.toString());
                                 }, onConnectionResult: (id, status) {
-                                  print('STATUS: $status');
+                                  print('STATUS');
+                                  print(status);
                                 }, onDisconnected: (id) {
-                                  print('DISCONNECTED: $id');
-                                });
+                                  print('Disconnected $id');
+                                }, serviceId: 'com.example.covid_19');
 
-                                print('ADVERTISING: ${a.toString()}');
+                                print('ADVERTISING ${a.toString()}');
                               } catch (e) {
-                                print('ERROR startAdvertising: $e');
+                                print(e);
                               }
 
-                              startDiscovery();
+                              discovery();
                             },
                             child: Text(
                               'Start Tracing',

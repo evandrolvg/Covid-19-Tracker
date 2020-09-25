@@ -78,8 +78,8 @@ class ContactCard extends StatelessWidget {
                         Text(
                           infected ? 'INFECTED' : 'NOT INFECTED',
                           style: kTitleTextstyle.copyWith(
-                            color: kTitleTextColor,
-                            fontSize: 10,
+                            color: infected ? kDeathColor : kPrimaryColor,
+                            fontSize: 13,
                           ),
                         ),
                         Spacer(),
