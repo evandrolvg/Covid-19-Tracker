@@ -5,7 +5,6 @@ import 'package:covid_19/widgets/nearby/components/contact_card.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:nearby_connections/nearby_connections.dart';
@@ -33,7 +32,6 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
 
   void addContactsToList() async {
     await getCurrentUser();
-    int i = 0;
 
     _firestore
         .collection('users')
@@ -65,7 +63,6 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
           contactLocations.add(currLocation);
           contactInfected.add(currInfected);
         }
-        i++;
       }
       setState(() {});
       // print(loggedInUser.email);
@@ -83,7 +80,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
         .snapshots()
         .listen((snapshot) {
       for (var doc in snapshot.docs) {
-//        print(doc.data.containsKey('contact time'));
+        //print(doc.data.containsKey('contact time'));
         if (doc.data().containsKey('contact time')) {
           DateTime contactTime = (doc.data()['contact time'] as Timestamp)
               .toDate(); // get last contact time
@@ -106,7 +103,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
         print('FOUND id:$id -> name:$name'); // the name here is an email
 
         currentLocation = await location.getLocation();
-        // (LatLng(currentLocation.latitude, currentLocation.longitude))
+
         GeoPoint point = new GeoPoint(currentLocation.latitude.toDouble(),
             currentLocation.longitude.toDouble());
 
@@ -243,22 +240,6 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
     }
   }
 
-  Future<void> _signOut() async {
-    try {
-      await _auth.signOut();
-      loggedInUser = _auth.currentUser;
-      // Navigator.pushNamed(context, WelcomeScreen.id);
-      // setState(() {
-      //   HomePage
-      // });
-      // main();
-      Phoenix.rebirth(context);
-    } catch (e) {
-      showToast(e.toString());
-      print(e);
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -310,125 +291,114 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
               child: Column(
                 children: <Widget>[
                   MyHeader(
-                    image: "assets/icons/smartphone.svg",
-                    width: 130,
-                    height: 300,
+                    image: "assets/icons/smartphone_signal.svg",
+                    imageDecoration: true,
+                    width: 170.0,
+                    height: 300.0,
                     textTop: "COVID-19",
                     textBottom: "contact tracing.",
-                    offset: offset,
+                    offset: 10,
+                    loggedInUser: loggedInUser,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    verticalDirection: VerticalDirection.up,
-                    children: <Widget>[
-                      Text(loggedInUser.email),
-                      FlatButton(
-                        child: Icon(
-                          Icons.exit_to_app,
-                          color: Colors.red[600],
-                          size: 24.0,
-                        ),
-                        onPressed: _signOut,
-                      ),
-                    ],
-                  ),
-
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Text("I'm infected"),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10.0),
-                          child: Switch(
-                            value: dynamicSwitch != true
-                                ? isSwitch
-                                : dynamicSwitch,
-                            onChanged: (val) {
-                              handleSwitch(val);
-                            },
-                            activeTrackColor: kPrimaryColor,
-                            activeColor: Colors.white,
-                            inactiveTrackColor: Colors.grey,
-                          ),
-                        ),
-                        // SizedBox(height: 20),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10.0),
-                          child: RaisedButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0)),
-                            elevation: 5.0,
-                            color: kPrimaryColor,
-                            onPressed: () async {
-                              try {
-                                bool a = await Nearby().startAdvertising(
-                                    loggedInUser.email, strategy,
-                                    onConnectionInitiated:
-                                        (String id, ConnectionInfo info) {
-                                  print('CONNECTION INITIATED: $info');
-                                }, onConnectionResult: (id, status) {
-                                  print('STATUS: $status');
-                                }, onDisconnected: (id) {
-                                  print('DISCONNECTED: $id');
-                                });
-
-                                print('ADVERTISING: ${a.toString()}');
-                              } catch (e) {
-                                print('ERROR startAdvertising: $e');
-                              }
-
-                              startDiscovery();
-                            },
-                            child: Text(
-                              'Start Tracing',
-                              style: kButtonTextStyle,
+                        Center(
+                          child: Container(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("I'm infected"),
+                                Switch(
+                                  value: dynamicSwitch != true
+                                      ? isSwitch
+                                      : dynamicSwitch,
+                                  onChanged: (val) {
+                                    handleSwitch(val);
+                                  },
+                                  activeTrackColor: kPrimaryColor,
+                                  activeColor: Colors.white,
+                                  inactiveTrackColor: Colors.grey,
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10.0),
-                          child: RaisedButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0)),
-                            elevation: 5.0,
-                            color: kDeathColor,
-                            onPressed: () async {
-                              stopDiscovery();
-                              stopAdvertising();
-                              stopAllEndpoints();
-                            },
-                            child: Text(
-                              'Stop Tracing',
-                              style: kButtonTextStyle,
+                        Center(
+                          child: Container(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(right: 5.0),
+                                  child: RaisedButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0)),
+                                    elevation: 5.0,
+                                    color: kPrimaryColor,
+                                    onPressed: () async {
+                                      try {
+                                        bool a = await Nearby()
+                                            .startAdvertising(
+                                                loggedInUser.email, strategy,
+                                                onConnectionInitiated:
+                                                    (String id,
+                                                        ConnectionInfo info) {
+                                          print('CONNECTION INITIATED: $info');
+                                        }, onConnectionResult: (id, status) {
+                                          print('STATUS: $status');
+                                        }, onDisconnected: (id) {
+                                          print('DISCONNECTED: $id');
+                                        });
+
+                                        print('ADVERTISING: ${a.toString()}');
+                                      } catch (e) {
+                                        print('ERROR startAdvertising: $e');
+                                      }
+
+                                      startDiscovery();
+                                    },
+                                    child: Text(
+                                      'Start Tracing',
+                                      style: kButtonTextStyle,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 5.0),
+                                  child: RaisedButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0)),
+                                    elevation: 5.0,
+                                    color: kDeathColor,
+                                    onPressed: () async {
+                                      stopDiscovery();
+                                      stopAdvertising();
+                                      stopAllEndpoints();
+                                    },
+                                    child: Text(
+                                      'Stop Tracing',
+                                      style: kButtonTextStyle,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ]),
                   // SizedBox(height: 10),
-                  // Padding(
-                  //   padding: EdgeInsets.symmetric(horizontal: 20),
-                  //   child: Row(
-                  //     children: <Widget>[
-                  //       RichText(
-                  //         text: TextSpan(
-                  //           children: [
-                  //             TextSpan(
-                  //               text: "My contacts\n",
-                  //               style: kTitleTextstyle,
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
+
                   ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       return ContactCard(
-                        imagePath: 'assets/images/wear_mask.png',
+                        imagePath: 'assets/images/user_nb.png',
                         email: contactTraces[index],
                         infected: contactInfected[index],
                         contactUsername: contactTraces[index],

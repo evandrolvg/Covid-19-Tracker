@@ -34,7 +34,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/covid.jpg'),
+            image: AssetImage('assets/images/covidBack.jpg'),
             fit: BoxFit.cover,
           ),
         ),

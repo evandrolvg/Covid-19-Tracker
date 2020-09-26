@@ -33,12 +33,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             title: 'Log In',
             colour: kPrimaryColor,
             onPressed: () {
-              // Navigator.pushNamed(context, LoginScreen.id);
-
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => LoginScreen()));
+              Navigator.pushNamed(context, LoginScreen.id);
             },
           ),
           RoundedButton(

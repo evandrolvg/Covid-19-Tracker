@@ -25,8 +25,8 @@ class AllData with ChangeNotifier {
         print(e.response.statusCode);
       } else if (e.response.statusCode == 404) {
         // oneResponse.data['country'] = json.encode('Not found');
-        oneResponse.data['code'] = e.response.statusCode;
         print(e.response.statusCode);
+        return e.response.statusCode.toString();
       } else {
         // oneResponse.data['country'] = json.encode('Not found');
         oneResponse.data['code'] = e.response.statusCode;

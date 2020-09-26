@@ -80,6 +80,7 @@ class _LivePageState extends State<LivePage> {
                     textTop: "All you need",
                     textBottom: "is stay at home.",
                     offset: offset,
+                    imageDecoration: true,
                   ),
                   //-----------------------------SELECT COUNTRY-----------------------------
                   Container(
@@ -96,6 +97,7 @@ class _LivePageState extends State<LivePage> {
                     ),
                     child: RaisedButton(
                       onPressed: () {
+                        CircularProgressIndicator();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -125,7 +127,7 @@ class _LivePageState extends State<LivePage> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Column(children: <Widget>[
-                      CircularProgressIndicator(),
+                      // CircularProgressIndicator(),
                       // Text(
                       //   "Country not found or doesn't have any cases",
                       //   style: TextStyle(
@@ -143,6 +145,7 @@ class _LivePageState extends State<LivePage> {
                   //-----------------------------HEADER-----------------------------
                   MyHeader(
                     image: "assets/icons/Drcorona.svg",
+                    imageDecoration: true,
                     textTop: "All you need",
                     textBottom: "is stay at home.",
                     offset: offset,
@@ -162,6 +165,7 @@ class _LivePageState extends State<LivePage> {
                     ),
                     child: RaisedButton(
                       onPressed: () {
+                        CircularProgressIndicator();
                         Navigator.push(
                             context,
                             MaterialPageRoute(

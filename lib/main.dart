@@ -103,9 +103,9 @@ class HomeScreen extends StatelessWidget {
           verticalDirection: VerticalDirection.up,
           children: [
             Text(
-              _checkLogin() ? 'Welcome ' + _auth.currentUser.email : '',
+              _checkLogin() ? 'WELCOME\n' + _auth.currentUser.email : '',
               style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 20,
                   backgroundColor: kTitleTextColor.withOpacity(.8),
                   color: kBackgroundColor),
             ),
