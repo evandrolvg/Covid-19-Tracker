@@ -1,19 +1,19 @@
-import 'package:covid_19/views/info/live.dart';
-import 'package:covid_19/helper/constant.dart';
-import 'package:covid_19/widgets/nearby/welcome_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:covid_19/widgets/nearby/nearby_interface.dart';
 import 'package:flutter/material.dart';
-import 'package:covid_19/views/news/newspage.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:covid_19/helper/constant.dart';
+import 'package:covid_19/views/info/live.dart';
+import 'package:covid_19/views/nearby/welcome_screen.dart';
+import 'package:covid_19/views/nearby/nearby_interface.dart';
+import 'package:covid_19/views/news/newspage.dart';
 
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+  //SingleTickerProviderStateMixin animation
   final controller = ScrollController();
   double offset = 0;
   TabController _tabController;
@@ -56,16 +56,10 @@ class _HomePageState extends State<HomePage>
       child: DefaultTabController(
         length: 3,
         child: new Scaffold(
-          body: TabBarView(
-              physics: BouncingScrollPhysics(),
-              controller: _tabController,
+          body: TabBarView(physics: BouncingScrollPhysics(), controller: _tabController,
               // children: [LivePage(), NewsPage(), InfoScreen()]),
               // children: [LivePage(), NewsPage(), WelcomeScreen()]),
-              children: [
-                LivePage(),
-                NewsPage(),
-                _checkLogin() ? NearbyInterface() : WelcomeScreen()
-              ]),
+              children: [LivePage(), NewsPage(), _checkLogin() ? NearbyInterface() : WelcomeScreen()]),
           bottomNavigationBar: TabBar(
             controller: _tabController,
             tabs: [
@@ -73,7 +67,7 @@ class _HomePageState extends State<HomePage>
                 icon: new Icon(Icons.home),
               ),
               Tab(
-                icon: Icon(Icons.announcement),
+                icon: Icon(Icons.library_books),
               ),
               Tab(
                 icon: Icon(Icons.info),

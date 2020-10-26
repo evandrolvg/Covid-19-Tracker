@@ -43,91 +43,69 @@ class _LivePageState extends State<LivePage> {
   @override
   Widget build(BuildContext context) {
     final liveCountry = Provider.of<AllData>(context);
-    double perCritActiv = liveCountry.oneResponse != null
-        ? (liveCountry.oneResponse.data['critical'] /
-                liveCountry.oneResponse.data['cases']) *
-            100
-        : 0;
-    double perActivTotal = liveCountry.oneResponse != null
-        ? (liveCountry.oneResponse.data['active'] /
-                liveCountry.oneResponse.data['cases']) *
-            100
-        : 0;
+    double perCritActiv =
+        liveCountry.oneResponse != null ? (liveCountry.oneResponse.data['critical'] / liveCountry.oneResponse.data['cases']) * 100 : 0;
+    double perActivTotal =
+        liveCountry.oneResponse != null ? (liveCountry.oneResponse.data['active'] / liveCountry.oneResponse.data['cases']) * 100 : 0;
 
-    double taxMort = liveCountry.oneResponse != null
-        ? (liveCountry.oneResponse.data['deaths'] /
-                liveCountry.oneResponse.data['cases']) *
-            100
-        : 0;
+    double taxMort = liveCountry.oneResponse != null ? (liveCountry.oneResponse.data['deaths'] / liveCountry.oneResponse.data['cases']) * 100 : 0;
 
-    double taxRec = liveCountry.oneResponse != null
-        ? (liveCountry.oneResponse.data['recovered'] /
-                liveCountry.oneResponse.data['cases']) *
-            100
-        : 0;
+    double taxRec = liveCountry.oneResponse != null ? (liveCountry.oneResponse.data['recovered'] / liveCountry.oneResponse.data['cases']) * 100 : 0;
 
     return Scaffold(
       body: SingleChildScrollView(
         controller: controller,
-        child: liveCountry.oneResponse == null ||
-                liveCountry.oneResponse.data['code'] == 404 ||
-                liveCountry.oneResponse.data['country'] == null
-            ? Column(
-                children: <Widget>[
-                  //-----------------------------HEADER-----------------------------
-                  MyHeader(
-                    image: "assets/icons/Drcorona.svg",
-                    textTop: "All you need",
-                    textBottom: "is stay at home.",
-                    offset: offset,
-                    imageDecoration: true,
+        child: Column(
+          children: <Widget>[
+            //-----------------------------HEADER-----------------------------
+            MyHeader(
+              image: "assets/icons/Drcorona.svg",
+              textTop: "All you need",
+              textBottom: "is stay at home.",
+              offset: offset,
+              imageDecoration: true,
+            ),
+            //-----------------------------SELECT COUNTRY-----------------------------
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+              height: 60,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
+                  color: Color(0xFFE5E5E5),
+                ),
+              ),
+              child: RaisedButton(
+                onPressed: () {
+                  CircularProgressIndicator();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ListCountry()));
+                },
+                color: Colors.transparent,
+                elevation: 0.0,
+                child: Padding(
+                  padding: EdgeInsets.all(0.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      SvgPicture.asset("assets/icons/maps-and-flags.svg"),
+                      Text(
+                        (liveCountry.oneResponse == null) ? 'Select a country' : liveCountry.oneResponse.data['country'],
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: kPrimaryColor),
+                      )
+                    ],
                   ),
-                  //-----------------------------SELECT COUNTRY-----------------------------
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    padding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-                    height: 60,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(25),
-                      border: Border.all(
-                        color: Color(0xFFE5E5E5),
-                      ),
-                    ),
-                    child: RaisedButton(
-                      onPressed: () {
-                        CircularProgressIndicator();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ListCountry()));
-                      },
-                      color: Colors.transparent,
-                      elevation: 0.0,
-                      child: Padding(
-                        padding: EdgeInsets.all(0.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            SvgPicture.asset("assets/icons/maps-and-flags.svg"),
-                            Text(
-                              'Select country',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  color: kPrimaryColor),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Padding(
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            liveCountry.oneResponse == null || liveCountry.oneResponse.data['country'] == null || liveCountry.oneResponse.data['code'] == 404
+                ? Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Column(children: <Widget>[
-                      // CircularProgressIndicator(),
+                      CircularProgressIndicator(),
                       // Text(
                       //   "Country not found or doesn't have any cases",
                       //   style: TextStyle(
@@ -137,74 +115,15 @@ class _LivePageState extends State<LivePage> {
                       //   ),
                       // ),
                     ]),
-                  ),
-                ],
-              )
-            : Column(
-                children: <Widget>[
-                  //-----------------------------HEADER-----------------------------
-                  MyHeader(
-                    image: "assets/icons/Drcorona.svg",
-                    imageDecoration: true,
-                    textTop: "All you need",
-                    textBottom: "is stay at home.",
-                    offset: offset,
-                  ),
-                  //-----------------------------SELECT COUNTRY-----------------------------
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    padding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-                    height: 60,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(25),
-                      border: Border.all(
-                        color: Color(0xFFE5E5E5),
-                      ),
-                    ),
-                    child: RaisedButton(
-                      onPressed: () {
-                        CircularProgressIndicator();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ListCountry()));
-                      },
-                      color: Colors.transparent,
-                      elevation: 0.0,
-                      child: Padding(
-                        padding: EdgeInsets.all(0.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            SvgPicture.asset("assets/icons/maps-and-flags.svg"),
-                            Text(
-                              (liveCountry.oneResponse == null)
-                                  ? 'Select a country'
-                                  : liveCountry.oneResponse.data['country'],
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  color: kPrimaryColor),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Padding(
+                  )
+                : Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: <Widget>[
                         //-----------------------------INFO COUNTRY-----------------------------
                         InfoCard(
-                            image: liveCountry
-                                .oneResponse.data['countryInfo']['flag']
-                                .toString(),
-                            title: n.format(
-                                liveCountry.oneResponse.data['population']),
+                            image: liveCountry.oneResponse.data['countryInfo']['flag'].toString(),
+                            title: n.format(liveCountry.oneResponse.data['population']),
                             text: liveCountry.oneResponse.data['continent']),
                         SizedBox(height: 10),
                         //-----------------------------CASES UPDATE-----------------------------
@@ -219,10 +138,7 @@ class _LivePageState extends State<LivePage> {
                                   ),
                                   TextSpan(
                                     text: d
-                                        .format(
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                liveCountry.oneResponse
-                                                    .data['updated']))
+                                        .format(DateTime.fromMillisecondsSinceEpoch(liveCountry.oneResponse.data['updated']))
                                         .toString()
                                         .split('.')[0],
                                     style: TextStyle(
@@ -238,19 +154,15 @@ class _LivePageState extends State<LivePage> {
                         //-----------------------------TOTAL CASES-----------------------------
                         Counter(
                           color: kInfectedColor,
-                          number:
-                              n.format((liveCountry.oneResponse.data['cases'])),
-                          plus: '+' +
-                              n.format(
-                                  liveCountry.oneResponse.data['todayCases']),
+                          number: n.format((liveCountry.oneResponse.data['cases'])),
+                          plus: '+' + n.format(liveCountry.oneResponse.data['todayCases']),
                           title: "Total cases",
                         ),
                         SizedBox(height: 10),
                         //-----------------------------ACTIVES-----------------------------
                         Counter(
                           color: kActiveColor,
-                          number:
-                              n.format(liveCountry.oneResponse.data['active']),
+                          number: n.format(liveCountry.oneResponse.data['active']),
                           title: "Total active",
                           plus: perc.format(perActivTotal) + '% of total cases',
                         ),
@@ -258,8 +170,7 @@ class _LivePageState extends State<LivePage> {
                         //-----------------------------CRITICAL-----------------------------
                         Counter(
                           color: kCriticalColor,
-                          number: n
-                              .format(liveCountry.oneResponse.data['critical']),
+                          number: n.format(liveCountry.oneResponse.data['critical']),
                           title: "Critical cases",
                           plus: perc.format(perCritActiv) + '% of total cases',
                         ),
@@ -267,12 +178,9 @@ class _LivePageState extends State<LivePage> {
                         //-----------------------------RECOVERED-----------------------------
                         Counter(
                           color: kRecovercolor,
-                          number: n.format(
-                              liveCountry.oneResponse.data['recovered']),
+                          number: n.format(liveCountry.oneResponse.data['recovered']),
                           title: "Total recovered",
-                          plus: '+' +
-                              n.format(liveCountry
-                                  .oneResponse.data['todayRecovered']),
+                          plus: '+' + n.format(liveCountry.oneResponse.data['todayRecovered']),
                         ),
                         SizedBox(height: 10),
                         ChartRadial(
@@ -288,12 +196,9 @@ class _LivePageState extends State<LivePage> {
                         //-----------------------------DEATHS-----------------------------
                         Counter(
                           color: kDeathColor,
-                          number:
-                              n.format(liveCountry.oneResponse.data['deaths']),
+                          number: n.format(liveCountry.oneResponse.data['deaths']),
                           title: "Total deaths",
-                          plus: '+' +
-                              n.format(
-                                  liveCountry.oneResponse.data['todayDeaths']),
+                          plus: '+' + n.format(liveCountry.oneResponse.data['todayDeaths']),
                         ),
                         SizedBox(height: 10),
                         ChartRadial(
@@ -309,8 +214,7 @@ class _LivePageState extends State<LivePage> {
                         //-----------------------------TESTS-----------------------------
                         Counter(
                           color: kPrimaryColor,
-                          number:
-                              n.format(liveCountry.oneResponse.data['tests']),
+                          number: n.format(liveCountry.oneResponse.data['tests']),
                           title: "Total tests",
                           plus: '',
                         ),
@@ -333,56 +237,50 @@ class _LivePageState extends State<LivePage> {
                         //-----------------------------TOTAL CASES-----------------------------
                         CounterMin(
                           color: kInfectedColor,
-                          number: n.format((liveCountry
-                              .oneResponse.data['casesPerOneMillion'])),
+                          number: n.format((liveCountry.oneResponse.data['casesPerOneMillion'])),
                           title: "Cases",
                         ),
                         SizedBox(height: 10),
                         //-----------------------------ACTIVES-----------------------------
                         CounterMin(
                           color: kActiveColor,
-                          number: n.format((liveCountry
-                              .oneResponse.data['activePerOneMillion'])),
+                          number: n.format((liveCountry.oneResponse.data['activePerOneMillion'])),
                           title: "Active",
                         ),
                         SizedBox(height: 10),
                         //-----------------------------CRITICAL-----------------------------
                         CounterMin(
                           color: kCriticalColor,
-                          number: n.format((liveCountry
-                              .oneResponse.data['criticalPerOneMillion'])),
+                          number: n.format((liveCountry.oneResponse.data['criticalPerOneMillion'])),
                           title: "Critical",
                         ),
                         SizedBox(height: 10),
                         //-----------------------------RECOVERED-----------------------------
                         CounterMin(
                           color: kRecovercolor,
-                          number: n.format((liveCountry
-                              .oneResponse.data['recoveredPerOneMillion'])),
+                          number: n.format((liveCountry.oneResponse.data['recoveredPerOneMillion'])),
                           title: "Recovered",
                         ),
                         SizedBox(height: 10),
                         //-----------------------------DEATHS-----------------------------
                         CounterMin(
                           color: kDeathColor,
-                          number: n.format((liveCountry
-                              .oneResponse.data['deathsPerOneMillion'])),
+                          number: n.format((liveCountry.oneResponse.data['deathsPerOneMillion'])),
                           title: "Deaths",
                         ),
                         SizedBox(height: 10),
                         //-----------------------------TESTS-----------------------------
                         CounterMin(
                           color: kPrimaryColor,
-                          number: n.format((liveCountry
-                              .oneResponse.data['testsPerOneMillion'])),
+                          number: n.format((liveCountry.oneResponse.data['testsPerOneMillion'])),
                           title: "Tests",
                         ),
                         SizedBox(height: 10),
                       ],
                     ),
                   ),
-                ],
-              ),
+          ],
+        ),
       ),
     );
   }

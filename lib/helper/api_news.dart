@@ -9,10 +9,10 @@ class News {
   List<Article> news = [];
 
   Future<void> getNews() async {
-    String url =
-        "http://newsapi.org/v2/top-headlines?q=covid&excludeDomains=stackoverflow.com&sortBy=publishedAt&language=en&apiKey=$apiKey";
+    String url = "http://newsapi.org/v2/top-headlines?q=covid&excludeDomains=stackoverflow.com&sortBy=publishedAt&language=en&apiKey=$apiKey";
 
     var response = await dio.get(url);
+    print(url);
 
     if (response.data['status'] == "ok") {
       response.data["articles"].forEach((element) {
@@ -40,10 +40,10 @@ class NewsForCategorie {
 
   Future<void> getNewsForCategory(String country) async {
     /*String url = "http://newsapi.org/v2/everything?q=$category&apiKey=${apiKey}";*/
-    String url =
-        "http://newsapi.org/v2/top-headlines?country=$country&q=covid&apiKey=$apiKey";
+    String url = "http://newsapi.org/v2/top-headlines?country=$country&q=covid&apiKey=$apiKey";
 
     var response = await dio.get(url);
+    print(url);
 
     if (response.data['status'] == "ok") {
       response.data["articles"].forEach((element) {

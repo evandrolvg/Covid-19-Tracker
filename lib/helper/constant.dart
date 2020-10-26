@@ -20,6 +20,11 @@ const kSecondaryColor = Color(0xFF1A1AFF);
 const kInfectedNBColor = Color(0xFFFFE6E6);
 final kShadowColor = Color(0xFFB7B7B7).withOpacity(.16);
 final kActiveShadowColor = Color(0xFF4056C6).withOpacity(.15);
+const Color kWhite = Color(0xFFFFFFFF);
+const Color kGrey = Color(0xFFF4F5F7);
+const Color kBlack = Color(0xFF2D3243);
+const Color kBlackLight = Colors.black38;
+const Color KTransparent = Colors.transparent;
 
 // Text Style
 const kHeadingTextStyle = TextStyle(
@@ -31,8 +36,7 @@ const kSubTextStyle = TextStyle(fontSize: 16, color: kTextLightColor);
 
 const kSubMTextStyle = TextStyle(fontSize: 16, color: kBackgroundColor);
 
-const kSubPlusTextStyle =
-    TextStyle(fontSize: 13, color: kBodyTextColor, letterSpacing: 2);
+const kSubPlusTextStyle = TextStyle(fontSize: 13, color: kBodyTextColor, letterSpacing: 2);
 
 const kTitleTextstyle = TextStyle(
   fontSize: 18,

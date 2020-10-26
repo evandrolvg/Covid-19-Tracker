@@ -1,4 +1,5 @@
 // import 'dart:convert';
+import 'package:covid_19/helper/constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:dio/dio.dart';
 
@@ -8,40 +9,28 @@ class AllData with ChangeNotifier {
   Dio dio = new Dio();
 
   retrieveOne(String countryName) async {
-    // oneResponse.data = [];
     try {
       if (countryName != null) {
         // String _url = 'https://disease.sh/v2/countries/' + CountryName;
-        String _url = 'https://disease.sh/v3/covid-19/countries/' +
-            countryName +
-            '?strict=true&allowNull=false';
+        String _url = 'https://disease.sh/v3/covid-19/countries/' + countryName + '?strict=true&allowNull=false';
         oneResponse = await dio.get(_url);
         notifyListeners();
       }
     } on DioError catch (e) {
       if (e.response.statusCode == null) {
-        // oneResponse.data['country'] = json.encode('Not found');
         oneResponse.data['code'] = null;
-        print(e.response.statusCode);
-      } else if (e.response.statusCode == 404) {
-        // oneResponse.data['country'] = json.encode('Not found');
-        print(e.response.statusCode);
-        return e.response.statusCode.toString();
+
+        showToast('Not found');
       } else {
-        // oneResponse.data['country'] = json.encode('Not found');
-        oneResponse.data['code'] = e.response.statusCode;
-        print(e.message);
-        print(e.request);
+        showToast('Not found');
       }
     }
   }
 
   retriveAll() async {
-    // allResponse.data = [];
     try {
       // String _url = 'https://disease.sh/v2/countries/';
-      String _url =
-          'https://disease.sh/v3/covid-19/countries?yesterday=true&twoDaysAgo=true&allowNull=false';
+      String _url = 'https://disease.sh/v3/covid-19/countries?yesterday=true&twoDaysAgo=true&allowNull=false';
 
       allResponse = await dio.get(_url);
       notifyListeners();

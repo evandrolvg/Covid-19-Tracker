@@ -1,10 +1,10 @@
-import 'package:covid_19/widgets/nearby/components/rounded_button.dart';
-import 'package:covid_19/helper/constant.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:covid_19/helper/constant.dart';
+import 'package:covid_19/views/nearby/components/rounded_button.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login_screen';
@@ -31,8 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
     String errorMessage;
 
     try {
-      final result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+      final result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       user = result.user;
       if (user != null) {
         Phoenix.rebirth(context);
@@ -100,8 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onChanged: (value) {
                     email = value;
                   },
-                  decoration: kTextFieldDecoration.copyWith(
-                      hintText: 'Enter your email'),
+                  decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your email'),
                 ),
                 SizedBox(
                   height: 8.0,
@@ -112,8 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onChanged: (value) {
                     password = value;
                   },
-                  decoration: kTextFieldDecoration.copyWith(
-                      hintText: 'Enter your password'),
+                  decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your password'),
                 ),
                 SizedBox(
                   height: 24.0,

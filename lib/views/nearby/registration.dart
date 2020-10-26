@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:covid_19/widgets/nearby/components/rounded_button.dart';
-import 'package:covid_19/helper/constant.dart';
-import 'package:covid_19/widgets/nearby/nearby_interface.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:covid_19/helper/constant.dart';
+import 'package:covid_19/views/nearby/components/rounded_button.dart';
+import 'package:covid_19/views/nearby/nearby_interface.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const String id = 'registration_screen';
@@ -51,8 +51,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   onChanged: (value) {
                     userName = value;
                   },
-                  decoration:
-                      kTextFieldDecoration.copyWith(hintText: 'Username'),
+                  decoration: kTextFieldDecoration.copyWith(hintText: 'Username'),
                 ),
                 SizedBox(
                   height: 8.0,
@@ -63,8 +62,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   onChanged: (value) {
                     email = value;
                   },
-                  decoration: kTextFieldDecoration.copyWith(
-                      hintText: 'Enter your email'),
+                  decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your email'),
                 ),
                 SizedBox(
                   height: 8.0,
@@ -75,8 +73,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   onChanged: (value) {
                     password = value;
                   },
-                  decoration: kTextFieldDecoration.copyWith(
-                      hintText: 'Enter your password'),
+                  decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your password'),
                 ),
                 SizedBox(
                   height: 24.0,
@@ -89,18 +86,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       showSpinner = true;
                     });
                     try {
-                      final newUser =
-                          await _auth.createUserWithEmailAndPassword(
-                              email: email, password: password);
+                      final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
                       if (newUser != null) {
                         _firestore.collection('users').doc(email).set({
                           'username': userName,
                           'infected': false,
                         });
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => NearbyInterface()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => NearbyInterface()));
                         // Navigator.pushNamed(context, NearbyInterface.id);
                       }
                       setState(() {

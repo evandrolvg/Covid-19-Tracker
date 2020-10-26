@@ -1,18 +1,18 @@
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:covid_19/helper/constant.dart';
-import 'package:covid_19/widgets/nearby/login.dart';
-import 'package:covid_19/widgets/nearby/registration.dart';
-import 'package:covid_19/widgets/nearby/welcome_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:covid_19/helper/api_covid.dart';
 import 'package:covid_19/Provider/country.dart';
+import 'package:covid_19/helper/constant.dart';
+import 'package:covid_19/views/nearby/login.dart';
+import 'package:covid_19/views/nearby/registration.dart';
+import 'package:covid_19/views/nearby/welcome_screen.dart';
 import 'package:covid_19/home_page.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 // void main() => runApp(MyApp());
 void main() async {
@@ -76,8 +76,7 @@ class HomeScreen extends StatelessWidget {
         country.setCountryName(pref.getString('country'));
         liveCountry.retrieveOne(country.countryName);
       }
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomePage()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
       liveCountry.retriveAll();
       // }
     });
@@ -93,10 +92,7 @@ class HomeScreen extends StatelessWidget {
         margin: EdgeInsets.all(0.0),
         height: double.infinity,
         width: double.infinity,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: ExactAssetImage('assets/images/covid.jpg'),
-                fit: BoxFit.fill)),
+        decoration: BoxDecoration(image: DecorationImage(image: ExactAssetImage('assets/images/covid.jpg'), fit: BoxFit.fill)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,10 +100,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             Text(
               _checkLogin() ? 'WELCOME\n' + _auth.currentUser.email : '',
-              style: TextStyle(
-                  fontSize: 20,
-                  backgroundColor: kTitleTextColor.withOpacity(.8),
-                  color: kBackgroundColor),
+              style: TextStyle(fontSize: 20, backgroundColor: kTitleTextColor.withOpacity(.8), color: kBackgroundColor),
             ),
           ],
         ),

@@ -1,6 +1,6 @@
-import 'package:covid_19/helper/constant.dart';
-import 'package:covid_19/widgets/nearby/components/rounded_button.dart';
 import 'package:flutter/material.dart';
+import 'package:covid_19/helper/constant.dart';
+import 'package:covid_19/views/nearby/components/rounded_button.dart';
 import 'login.dart';
 import 'registration.dart';
 

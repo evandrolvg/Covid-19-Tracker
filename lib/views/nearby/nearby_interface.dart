@@ -1,13 +1,13 @@
-import 'package:covid_19/helper/constant.dart';
-import 'package:covid_19/views/info/my_header.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:covid_19/widgets/nearby/components/contact_card.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 import 'package:nearby_connections/nearby_connections.dart';
+import 'package:location/location.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:covid_19/helper/constant.dart';
+import 'package:covid_19/views/info/my_header.dart';
+import 'package:covid_19/views/nearby/components/contact_card.dart';
 
 class NearbyInterface extends StatefulWidget {
   // static const String id = 'nearby_interface';
@@ -33,26 +33,15 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
   void addContactsToList() async {
     await getCurrentUser();
 
-    _firestore
-        .collection('users')
-        .doc(loggedInUser.email)
-        .collection('met_with')
-        .snapshots()
-        .listen((snapshot) {
+    _firestore.collection('users').doc(loggedInUser.email).collection('met_with').snapshots().listen((snapshot) {
       for (var doc in snapshot.docs) {
         String currUsername = doc.data()['username'];
-        bool currInfected =
-            doc.data()['infected'] != null ? doc.data()['infected'] : false;
-        DateTime currTime = doc.data().containsKey('contact time')
-            ? (doc.data()['contact time'] as Timestamp).toDate()
-            : null;
-        GeoPoint currLocation = doc.data().containsKey('contact location')
-            ? doc.data()['contact location']
-            : null;
+        bool currInfected = doc.data()['infected'] != null ? doc.data()['infected'] : false;
+        DateTime currTime = doc.data().containsKey('contact time') ? (doc.data()['contact time'] as Timestamp).toDate() : null;
+        GeoPoint currLocation = doc.data().containsKey('contact location') ? doc.data()['contact location'] : null;
 
         if (contactTraces.contains(currUsername)) {
-          int index = contactTraces
-              .indexWhere((contactTraces) => contactTraces == currUsername);
+          int index = contactTraces.indexWhere((contactTraces) => contactTraces == currUsername);
           contactTraces[index] = currUsername;
           contactTimes[index] = (currTime);
           contactLocations[index] = (currLocation);
@@ -73,17 +62,11 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
     await getCurrentUser();
     DateTime timeNow = DateTime.now(); //get today's time
 
-    _firestore
-        .collection('users')
-        .doc(loggedInUser.email)
-        .collection('met_with')
-        .snapshots()
-        .listen((snapshot) {
+    _firestore.collection('users').doc(loggedInUser.email).collection('met_with').snapshots().listen((snapshot) {
       for (var doc in snapshot.docs) {
         //print(doc.data.containsKey('contact time'));
         if (doc.data().containsKey('contact time')) {
-          DateTime contactTime = (doc.data()['contact time'] as Timestamp)
-              .toDate(); // get last contact time
+          DateTime contactTime = (doc.data()['contact time'] as Timestamp).toDate(); // get last contact time
           // if time since contact is greater than threshold than remove the contact
           if (timeNow.difference(contactTime).inDays > threshold) {
             doc.reference.delete();
@@ -97,15 +80,13 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
 
   void startDiscovery() async {
     try {
-      bool a = await Nearby().startDiscovery(loggedInUser.email, strategy,
-          onEndpointFound: (id, name, serviceId) async {
+      bool a = await Nearby().startDiscovery(loggedInUser.email, strategy, onEndpointFound: (id, name, serviceId) async {
         showToast('Found: $name');
         print('FOUND id:$id -> name:$name'); // the name here is an email
 
         currentLocation = await location.getLocation();
 
-        GeoPoint point = new GeoPoint(currentLocation.latitude.toDouble(),
-            currentLocation.longitude.toDouble());
+        GeoPoint point = new GeoPoint(currentLocation.latitude.toDouble(), currentLocation.longitude.toDouble());
 
         var docRef = _firestore.collection('users').doc(loggedInUser.email);
 
@@ -213,11 +194,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
     bool res = false;
     await getCurrentUser();
 
-    await _firestore
-        .collection('users')
-        .doc(loggedInUser.email)
-        .get()
-        .then((doc) {
+    await _firestore.collection('users').doc(loggedInUser.email).get().then((doc) {
       if (doc.exists) {
         res = doc.data()['infected'];
         // setState(() => infected = doc.data()['infected']);
@@ -263,10 +240,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
   @override
   Widget build(BuildContext context) {
     handleSwitch(bool value) {
-      _firestore
-          .collection('users')
-          .doc(loggedInUser.email)
-          .update({"infected": value}).then((_) {
+      _firestore.collection('users').doc(loggedInUser.email).update({"infected": value}).then((_) {
         showToast('Status changed');
       });
       setState(() {
@@ -300,97 +274,85 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
                     offset: 10,
                     loggedInUser: loggedInUser,
                   ),
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Center(
-                          child: Container(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("I'm infected"),
-                                Switch(
-                                  value: dynamicSwitch != true
-                                      ? isSwitch
-                                      : dynamicSwitch,
-                                  onChanged: (val) {
-                                    handleSwitch(val);
-                                  },
-                                  activeTrackColor: kPrimaryColor,
-                                  activeColor: Colors.white,
-                                  inactiveTrackColor: Colors.grey,
-                                ),
-                              ],
+                  Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+                    Center(
+                      child: Container(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("I'm infected"),
+                            Switch(
+                              value: dynamicSwitch != true ? isSwitch : dynamicSwitch,
+                              onChanged: (val) {
+                                handleSwitch(val);
+                              },
+                              activeTrackColor: kPrimaryColor,
+                              activeColor: Colors.white,
+                              inactiveTrackColor: Colors.grey,
                             ),
-                          ),
+                          ],
                         ),
-                        Center(
-                          child: Container(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: 5.0),
-                                  child: RaisedButton(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0)),
-                                    elevation: 5.0,
-                                    color: kPrimaryColor,
-                                    onPressed: () async {
-                                      try {
-                                        bool a = await Nearby()
-                                            .startAdvertising(
-                                                loggedInUser.email, strategy,
-                                                onConnectionInitiated:
-                                                    (String id,
-                                                        ConnectionInfo info) {
-                                          print('CONNECTION INITIATED: $info');
-                                        }, onConnectionResult: (id, status) {
-                                          print('STATUS: $status');
-                                        }, onDisconnected: (id) {
-                                          print('DISCONNECTED: $id');
-                                        });
+                      ),
+                    ),
+                    Center(
+                      child: Container(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: 5.0),
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                                elevation: 5.0,
+                                color: kPrimaryColor,
+                                onPressed: () async {
+                                  try {
+                                    bool a = await Nearby().startAdvertising(loggedInUser.email, strategy,
+                                        onConnectionInitiated: (String id, ConnectionInfo info) {
+                                      print('CONNECTION INITIATED: $info');
+                                    }, onConnectionResult: (id, status) {
+                                      print('STATUS: $status');
+                                    }, onDisconnected: (id) {
+                                      print('DISCONNECTED: $id');
+                                    });
 
-                                        print('ADVERTISING: ${a.toString()}');
-                                      } catch (e) {
-                                        print('ERROR startAdvertising: $e');
-                                      }
+                                    print('ADVERTISING: ${a.toString()}');
+                                  } catch (e) {
+                                    print('ERROR startAdvertising: $e');
+                                  }
 
-                                      startDiscovery();
-                                    },
-                                    child: Text(
-                                      'Start Tracing',
-                                      style: kButtonTextStyle,
-                                    ),
-                                  ),
+                                  startDiscovery();
+                                },
+                                child: Text(
+                                  'Start Tracing',
+                                  style: kButtonTextStyle,
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 5.0),
-                                  child: RaisedButton(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0)),
-                                    elevation: 5.0,
-                                    color: kDeathColor,
-                                    onPressed: () async {
-                                      stopDiscovery();
-                                      stopAdvertising();
-                                      stopAllEndpoints();
-                                    },
-                                    child: Text(
-                                      'Stop Tracing',
-                                      style: kButtonTextStyle,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 5.0),
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                                elevation: 5.0,
+                                color: kDeathColor,
+                                onPressed: () async {
+                                  stopDiscovery();
+                                  stopAdvertising();
+                                  stopAllEndpoints();
+                                },
+                                child: Text(
+                                  'Stop Tracing',
+                                  style: kButtonTextStyle,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ]),
+                      ),
+                    ),
+                  ]),
                   // SizedBox(height: 10),
 
                   ListView.builder(
@@ -403,9 +365,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
                         infected: contactInfected[index],
                         contactUsername: contactTraces[index],
                         contactTime: contactTimes[index],
-                        contactLocation: LatLng(
-                            contactLocations[index].latitude.toDouble(),
-                            contactLocations[index].longitude.toDouble()),
+                        contactLocation: LatLng(contactLocations[index].latitude.toDouble(), contactLocations[index].longitude.toDouble()),
                       );
                     },
                     itemCount: contactTraces.length,

@@ -1,6 +1,6 @@
 import 'package:covid_19/helper/api_covid.dart';
 import 'package:covid_19/Provider/country.dart';
-import 'package:covid_19/home_page.dart';
+// import 'package:covid_19/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ola_like_country_picker/ola_like_country_picker.dart';
 import 'package:provider/provider.dart';
@@ -16,8 +16,7 @@ class ListCountry extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title:
-              Text('Pick your Country', style: TextStyle(color: Colors.blue)),
+          title: Text('Pick your Country', style: TextStyle(color: Colors.blue)),
           centerTitle: true,
           automaticallyImplyLeading: false,
           backgroundColor: Colors.white,
@@ -32,12 +31,10 @@ class ListCountry extends StatelessWidget {
                 scrollPhysics: BouncingScrollPhysics(),
                 onSelected: (Country countryName) async {
                   liveCountry.retrieveOne(countryName.code);
-                  SharedPreferences pref =
-                      await SharedPreferences.getInstance();
+                  SharedPreferences pref = await SharedPreferences.getInstance();
                   pref.setString('country', countryName.code);
                   country.setCountryName(countryName.code);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomePage()));
+                  Navigator.pop(context);
                 },
               ),
             ),

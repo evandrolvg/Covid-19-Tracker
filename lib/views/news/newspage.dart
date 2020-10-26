@@ -36,6 +36,7 @@ class _NewsPageState extends State<NewsPage> {
     super.initState();
 
     categories = getCategories();
+    getNews();
   }
 
   @override
@@ -45,11 +46,8 @@ class _NewsPageState extends State<NewsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final liveCountry = Provider.of<AllData>(context);
-    getNews();
-
     return Scaffold(
-      appBar: newsBar(),
+      appBar: newsBar(context, false),
       body: SafeArea(
         child: _loading
             ? Center(
@@ -68,6 +66,7 @@ class _NewsPageState extends State<NewsPage> {
                             itemCount: categories.length,
                             itemBuilder: (context, index) {
                               return CategoryCard(
+                                index: index,
                                 imageAssetUrl: categories[index].imageAssetUrl,
                                 categoryName: categories[index].categorieName,
                               );
@@ -88,10 +87,7 @@ class _NewsPageState extends State<NewsPage> {
                                 desc: newslist[index].description ?? "",
                                 content: newslist[index].content ?? "",
                                 posturl: newslist[index].articleUrl ?? "",
-                                publshedAt: DateTime.parse(newslist[index]
-                                        .publshedAt
-                                        .toString()) ??
-                                    Null,
+                                publshedAt: DateTime.parse(newslist[index].publshedAt.toString()) ?? Null,
                               );
                             }),
                       ),
@@ -105,20 +101,24 @@ class _NewsPageState extends State<NewsPage> {
 }
 
 class CategoryCard extends StatelessWidget {
+  final int index;
   final String imageAssetUrl, categoryName;
 
-  CategoryCard({this.imageAssetUrl, this.categoryName});
+  const CategoryCard({Key key, this.index, this.imageAssetUrl, this.categoryName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => CategoryNews(
-                      newsCategory: categoryName.toLowerCase(),
-                    )));
+        index != 0
+            ? Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => CategoryNews(
+                          newsCategory: categoryName.toLowerCase(),
+                        )))
+            // ignore: unnecessary_statements
+            : null;
       },
       child: Container(
         margin: EdgeInsets.only(right: 14),
@@ -126,23 +126,20 @@ class CategoryCard extends StatelessWidget {
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(5),
-              child: Image.asset(imageAssetUrl,
-                  height: 60, width: 120, fit: BoxFit.cover),
+              child: Image.asset(imageAssetUrl, height: 60, width: 120, fit: BoxFit.cover),
             ),
             Container(
               alignment: Alignment.center,
               height: 60,
               width: 120,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.black26),
+              decoration: index == 0
+                  ? BoxDecoration(
+                      border: Border.all(color: Colors.blueAccent, width: 2), borderRadius: BorderRadius.circular(5), color: Colors.black26)
+                  : BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.black26),
               child: Text(
                 categoryName,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500),
+                style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
               ),
             )
           ],

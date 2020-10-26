@@ -13,21 +13,37 @@ class ArticleView extends StatefulWidget {
 }
 
 class _ArticleViewState extends State<ArticleView> {
-  final Completer<WebViewController> _controller =
-      Completer<WebViewController>();
+  final Completer<WebViewController> _controller = Completer<WebViewController>();
+  final _key = UniqueKey();
+  bool _isLoadingPage;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLoadingPage = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: newsBar(),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: WebView(
-          initialUrl: widget.postUrl,
-          onWebViewCreated: (WebViewController webViewController) {
-            _controller.complete(webViewController);
-          },
-        ),
+      appBar: newsBar(context, true),
+      body: Stack(
+        children: <Widget>[
+          new WebView(
+            key: _key,
+            initialUrl: widget.postUrl,
+            onWebViewCreated: (WebViewController webViewController) {
+              _controller.complete(webViewController);
+            },
+            javascriptMode: JavascriptMode.unrestricted,
+            onPageFinished: (finish) {
+              setState(() {
+                _isLoadingPage = false;
+              });
+            },
+          ),
+          _isLoadingPage ? Center(child: CircularProgressIndicator()) : Container(),
+        ],
       ),
     );
   }

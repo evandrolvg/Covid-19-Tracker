@@ -48,7 +48,7 @@ class _CategoryNewsState extends State<CategoryNews> {
     getNews(liveCountry.oneResponse.data['countryInfo']['iso2']);
 
     return Scaffold(
-      appBar: newsBar(),
+      appBar: newsBar(context, true),
       body: _loading
           ? Center(
               child: CircularProgressIndicator(),
@@ -66,9 +66,7 @@ class _CategoryNewsState extends State<CategoryNews> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Image(
-                                    image: AssetImage('assets/images/news.png'),
-                                    height: 35),
+                                Image(image: AssetImage('assets/images/news.png'), height: 35),
                                 SizedBox(height: 10),
                                 Text('No news', style: kSubTextStyle),
                               ],
@@ -89,10 +87,7 @@ class _CategoryNewsState extends State<CategoryNews> {
                                 desc: newslist[index].description ?? "",
                                 content: newslist[index].content ?? "",
                                 posturl: newslist[index].articleUrl ?? "",
-                                publshedAt: DateTime.parse(newslist[index]
-                                        .publshedAt
-                                        .toString()) ??
-                                    Null,
+                                publshedAt: DateTime.parse(newslist[index].publshedAt.toString()) ?? Null,
                               );
                             }),
                       ),
