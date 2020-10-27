@@ -23,7 +23,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Strategy strategy = Strategy.P2P_STAR;
   auth.User loggedInUser;
-  String testText = '';
+  bool discover = false;
   final _auth = auth.FirebaseAuth.instance;
   List<dynamic> contactTraces = [];
   List<dynamic> contactTimes = [];
@@ -53,8 +53,12 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
           contactInfected.add(currInfected);
         }
       }
-      setState(() {});
+      if (this.mounted) {
+        setState(() {});
+      }
       // print(loggedInUser.email);
+      print('-----------------------');
+      print(contactTraces);
     });
   }
 
@@ -75,7 +79,9 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
       }
     });
 
-    setState(() {});
+    if (this.mounted) {
+      setState(() {});
+    }
   }
 
   void startDiscovery() async {
@@ -101,6 +107,11 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
       });
       showToast('Discovery active');
       print('DISCOVERING: ${a.toString()}');
+      if (this.mounted) {
+        setState(() {
+          discover = true;
+        });
+      }
     } catch (e) {
       print('ERROR STARTDISCOVERY: $e');
     }
@@ -110,6 +121,11 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
     try {
       await Nearby().stopAllEndpoints();
       print('STOP STOPALLENDPOINTS');
+      if (this.mounted) {
+        setState(() {
+          discover = false;
+        });
+      }
     } catch (e) {
       print(e);
     }
@@ -120,6 +136,11 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
       await Nearby().stopDiscovery();
       showToast('Stop discovering');
       // print('STOP DISCOVERING');
+      if (this.mounted) {
+        setState(() {
+          discover = false;
+        });
+      }
     } catch (e) {
       print(e);
     }
@@ -129,6 +150,11 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
     try {
       await Nearby().stopAdvertising();
       showToast('Stop advertising');
+      if (this.mounted) {
+        setState(() {
+          discover = false;
+        });
+      }
       // print('STOP DISCOVERING');
     } catch (e) {
       print(e);
@@ -221,12 +247,14 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
   void initState() {
     super.initState();
     Firebase.initializeApp().whenComplete(() {
-      setState(() {
-        deleteOldContacts(14);
-        addContactsToList();
-        getPermissions();
-        stopAllEndpoints();
-      });
+      if (this.mounted) {
+        setState(() {
+          deleteOldContacts(14);
+          addContactsToList();
+          getPermissions();
+          stopAllEndpoints();
+        });
+      }
     });
   }
 
@@ -243,10 +271,12 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
       _firestore.collection('users').doc(loggedInUser.email).update({"infected": value}).then((_) {
         showToast('Status changed');
       });
-      setState(() {
-        isSwitch = value;
-        dynamicSwitch = value;
-      });
+      if (this.mounted) {
+        setState(() {
+          isSwitch = value;
+          dynamicSwitch = value;
+        });
+      }
     }
 
     return FutureBuilder(
@@ -352,6 +382,7 @@ class _NearbyInterfaceState extends State<NearbyInterface> {
                         ),
                       ),
                     ),
+                    Text(discover ? 'Discovery active' : 'Discovery ended'),
                   ]),
                   // SizedBox(height: 10),
 

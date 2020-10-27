@@ -14,16 +14,7 @@ class MyHeader extends StatefulWidget {
   final String textBottom;
   final double offset;
   auth.User loggedInUser;
-  MyHeader(
-      {Key key,
-      this.image,
-      this.imageDecoration,
-      this.width,
-      this.height,
-      this.textTop,
-      this.textBottom,
-      this.offset,
-      this.loggedInUser})
+  MyHeader({Key key, this.image, this.imageDecoration, this.width, this.height, this.textTop, this.textBottom, this.offset, this.loggedInUser})
       : super(key: key);
 
   @override
@@ -51,7 +42,7 @@ class _MyHeaderState extends State<MyHeader> {
     return ClipPath(
       clipper: MyClipper(),
       child: Container(
-        padding: EdgeInsets.only(left: 40, top: 30, right: 20),
+        padding: EdgeInsets.only(left: 0, top: 30, right: 0),
         height: widget.height != null ? widget.height : 350,
         width: double.infinity,
         decoration: widget.imageDecoration
@@ -80,41 +71,33 @@ class _MyHeaderState extends State<MyHeader> {
               ),
         child: widget.loggedInUser != null
             ? Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Center(
                     child: Container(
-                      height: 50.0,
+                      height: 28.0,
                       width: MediaQuery.of(context).size.width,
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         textDirection: TextDirection.rtl,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              FlatButton(
-                                child: Icon(
-                                  Icons.exit_to_app,
-                                  color: kBackgroundColor,
-                                  size: 30.0,
-                                ),
-                                onPressed: _signOut,
-                              ),
-                            ],
+                          FlatButton(
+                            child: Icon(
+                              Icons.exit_to_app,
+                              color: kBackgroundColor,
+                              size: 25.0,
+                            ),
+                            onPressed: _signOut,
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                widget.loggedInUser.email != null
-                                    ? widget.loggedInUser.email
-                                    : '',
-                                style: TextStyle(
-                                    fontSize: 15, color: kBackgroundColor),
+                                widget.loggedInUser.email != null ? widget.loggedInUser.email : '',
+                                style: TextStyle(fontSize: 15, color: kBackgroundColor),
                               ),
                             ],
                           ),
@@ -122,6 +105,7 @@ class _MyHeaderState extends State<MyHeader> {
                       ),
                     ),
                   ),
+                  Divider(color: kPrimaryColor),
                   Expanded(
                     child: Stack(
                       children: <Widget>[
@@ -136,7 +120,7 @@ class _MyHeaderState extends State<MyHeader> {
                         ),
                         Positioned(
                           top: 20 - widget.offset / 2,
-                          left: 150,
+                          left: 195,
                           child: Text(
                             "${widget.textTop} \n${widget.textBottom}",
                             style: kHeadingTextStyle.copyWith(
@@ -168,7 +152,7 @@ class _MyHeaderState extends State<MyHeader> {
                         ),
                         Positioned(
                           top: 20 - widget.offset / 2,
-                          left: 150,
+                          left: 195,
                           child: Text(
                             "${widget.textTop} \n${widget.textBottom}",
                             style: kHeadingTextStyle.copyWith(
@@ -192,8 +176,7 @@ class MyClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     var path = Path();
     path.lineTo(0, size.height - 80);
-    path.quadraticBezierTo(
-        size.width / 2, size.height, size.width, size.height - 80);
+    path.quadraticBezierTo(size.width / 2, size.height, size.width, size.height - 80);
     path.lineTo(size.width, 0);
     path.close();
     return path;

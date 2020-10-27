@@ -5,15 +5,14 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:covid_19/helper/constant.dart';
 import 'package:covid_19/views/nearby/components/rounded_button.dart';
-import 'package:covid_19/views/nearby/forgot_password.dart';
 
-class LoginScreen extends StatefulWidget {
-  static const String id = 'login_screen';
+class ForgotPasswordScreen extends StatefulWidget {
+  static const String id = 'forgot_password_screen';
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   bool showSpinner = false;
   final _auth = auth.FirebaseAuth.instance;
   String email;
@@ -70,12 +69,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TextEditingController emailTxtController = TextEditingController()
-    //   ..text = 'teste@teste.com.br';
-
-    // TextEditingController passTxtController = TextEditingController()
-    //   ..text = 'testeteste';
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -99,26 +92,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     email = value;
                   },
                   decoration: kTextFieldDecoration.copyWith(hintText: 'Email'),
-                  textInputAction: TextInputAction.next,
+                  textInputAction: TextInputAction.done,
                 ),
                 SizedBox(
                   height: 8.0,
                 ),
-                TextField(
-                  obscureText: true,
-                  textAlign: TextAlign.center,
-                  onChanged: (value) {
-                    password = value;
-                  },
-                  decoration: kTextFieldDecoration.copyWith(hintText: 'Password'),
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.done,
-                ),
-                SizedBox(
-                  height: 24.0,
-                ),
                 RoundedButton(
-                  title: 'Log In',
+                  title: 'Send email',
                   colour: kPrimaryColor,
                   onPressed: () async {
                     setState(() {
@@ -126,11 +106,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     });
 
                     try {
-                      if (email != null && password != null) {
-                        await signIn(email, password);
-                        // if (user != null) {
-                        //   Phoenix.rebirth(context);
-                        // }
+                      if (email != null) {
+                        await _auth.sendPasswordResetEmail(email: email);
+                        showToast('Email sent, check your email.');
 
                         setState(() {
                           showSpinner = false;
@@ -148,29 +126,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       });
                       print(e);
                     }
+
+                    Navigator.of(context).pop();
                   },
-                ),
-                Container(
-                  height: 35.0,
-                  // color: Colors.orange,
-                  child: FlatButton(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 0, right: 20, bottom: 0),
-                      child: Text(
-                        "Forgot password?",
-                        textAlign: TextAlign.right,
-                        style: TextStyle(color: kWhite),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ForgotPasswordScreen(),
-                        ),
-                      );
-                    },
-                  ),
                 ),
               ],
             ),

@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:covid_19/helper/constant.dart';
 import 'package:covid_19/views/nearby/components/rounded_button.dart';
-import 'package:covid_19/views/nearby/nearby_interface.dart';
+import 'package:covid_19/home_page.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const String id = 'registration_screen';
@@ -92,7 +92,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           'username': userName,
                           'infected': false,
                         });
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => NearbyInterface()));
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
                         // Navigator.pushNamed(context, NearbyInterface.id);
                       }
                       setState(() {
