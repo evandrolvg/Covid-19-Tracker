@@ -1,4 +1,5 @@
-# COVID-19 Tracker
+# COVID-19 Tracker <img src="assets/images/icon.png" width="30" title="icon">
+
 
 ![Screenshot](screenshots/screens01.png)
 
