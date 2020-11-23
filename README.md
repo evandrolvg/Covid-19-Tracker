@@ -1,5 +1,7 @@
 # COVID-19 Tracker
 
+![Screenshot](screenshots/screens01.png)
+
 ## Features
 - Display realtime number of covid19 cases, deaths and recovered people from countries and worldwide.
 - Cases/deaths/recovered chart for countries and world.
